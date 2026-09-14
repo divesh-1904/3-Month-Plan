@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudyHub — 12-Week Master Dashboard & Notes</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Markdown parser -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js">
+    function toggleMobileSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      if (sidebar && backdrop) {
+        const isOpen = sidebar.classList.toggle('open');
+        backdrop.classList.toggle('active', isOpen);
+      }
+    }
+
+    // Auto-close mobile sidebar when clicking a nav item on small screens
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          if (window.innerWidth <= 992) {
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (sidebar) sidebar.classList.remove('open');
+            if (backdrop) backdrop.classList.remove('active');
+          }
+        });
+      });
+    });
+
+  </script>
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-card: #162032;
+      --bg-card-hover: #1e2d42;
+      --border-color: #1f2d40;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-emerald: #10b981;
+      --accent-emerald-glow: rgba(16, 185, 129, 0.2);
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-amber: #f59e0b;
+      --sidebar-width: 280px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Left Sidebar */
+    .sidebar {
+      width: var(--sidebar-width);
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      padding: 24px 20px 18px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #10b981, #06b6d4);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 12px var(--accent-emerald-glow);
+    }
+
+    .brand-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      background: linear-gradient(to right, #f3f4f6, #9ca3af);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-section {
+      padding: 16px 12px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .nav-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 12px 10px 6px;
+      font-weight: 700;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 0.92rem;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      margin-bottom: 3px;
+    }
+
+    .nav-item:hover {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--accent-emerald);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .progress-box {
+      margin: 16px;
+      padding: 14px;
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .progress-title {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: #0f172a;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #38bdf8);
+      border-radius: 4px;
+      width: 3%;
+      transition: width 0.3s ease;
+    }
+
+    /* Main Content Area */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .topbar {
+      height: 64px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+      flex-shrink: 0;
+    }
+
+    .search-box {
+      position: relative;
+      width: 360px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 9px 14px 9px 36px;
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--accent-emerald);
+      box-shadow: 0 0 0 3px var(--accent-emerald-glow);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .view-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 36px 60px;
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Tab views */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Header Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(56, 189, 248, 0.05));
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      border-radius: 14px;
+      padding: 22px 26px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .schedule-chips {
+      display: flex;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Week Accordions */
+    .week-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .week-card:hover {
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .week-header {
+      padding: 16px 20px;
+      background: rgba(22, 32, 50, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .week-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .week-badge {
+      font-size: 0.75rem;
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-blue);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+    }
+
+    .week-body {
+      padding: 12px 20px 20px;
+      display: block;
+    }
+
+    .day-section {
+      margin-top: 14px;
+    }
+
+    .day-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-emerald);
+      font-weight: 700;
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    }
+
+    /* Task Item */
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      background: rgba(11, 15, 25, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.15s ease;
+    }
+
+    .task-item:hover {
+      background: rgba(30, 45, 66, 0.4);
+      border-color: rgba(56, 189, 248, 0.2);
+    }
+
+    .task-item.done {
+      opacity: 0.65;
+    }
+
+    .task-item.done .task-name {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .task-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .task-checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-emerald);
+      cursor: pointer;
+    }
+
+    .task-name {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .task-time {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .task-link {
+      color: var(--accent-blue);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.15s;
+    }
+
+    .task-link:hover {
+      text-decoration: underline;
+      color: #7dd3fc;
+    }
+
+    
+    /* Action Buttons for Task Items */
+    .task-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .task-btn {
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .yt-btn {
+      background: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .yt-btn:hover {
+      background: rgba(239, 68, 68, 0.28);
+      color: #fca5a5;
+      transform: translateY(-1px);
+    }
+
+    .lc-btn {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    .lc-btn:hover {
+      background: rgba(245, 158, 11, 0.28);
+      color: #fde68a;
+      transform: translateY(-1px);
+    }
+
+    .tuf-btn {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .tuf-btn:hover {
+      background: rgba(56, 189, 248, 0.28);
+      color: #7dd3fc;
+      transform: translateY(-1px);
+    }
+
+    .local-btn {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .local-btn:hover {
+      background: rgba(16, 185, 129, 0.28);
+      color: #6ee7b7;
+      transform: translateY(-1px);
+    }
+
+    /* Markdown Reader Styling */
+    .markdown-body {
+      color: #e5e7eb;
+      font-size: 0.96rem;
+      line-height: 1.75;
+    }
+
+    .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+      color: #fff;
+      margin-top: 1.6em;
+      margin-bottom: 0.6em;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .markdown-body h1 {
+      font-size: 1.8rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.3em;
+    }
+
+    .markdown-body h2 {
+      font-size: 1.35rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      padding-bottom: 0.25em;
+    }
+
+    .markdown-body pre {
+      background: #0d131f;
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin: 16px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+    }
+
+    .markdown-body code {
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88em;
+      color: #38bdf8;
+    }
+
+    .markdown-body pre code {
+      background: none;
+      padding: 0;
+      color: #e5e7eb;
+    }
+
+    .markdown-body blockquote {
+      border-left: 4px solid var(--accent-emerald);
+      padding: 10px 18px;
+      background: rgba(16, 185, 129, 0.08);
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+      color: #d1fae5;
+    }
+
+    .markdown-body table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 18px 0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .markdown-body th, .markdown-body td {
+      border: 1px solid var(--border-color);
+      padding: 10px 14px;
+      text-align: left;
+    }
+
+    .markdown-body th {
+      background: #111827;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .markdown-body img {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      margin: 16px 0;
+    }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #273549;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #37475f;
+    }
+  
+    /* ===================================================
+       RESPONSIVE & MOBILE DESIGN SYSTEM
+       =================================================== */
+
+    /* Mobile Hamburger Button */
+    .mobile-menu-btn {
+      display: none;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+    .mobile-menu-btn:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--accent-emerald);
+    }
+
+    /* Sidebar Mobile Backdrop */
+    .sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 998;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+    .sidebar-backdrop.active {
+      display: block;
+      opacity: 1;
+    }
+
+    /* Tablet breakpoint (<= 992px) */
+    @media (max-width: 992px) {
+      .mobile-menu-btn {
+        display: inline-flex;
+      }
+
+      .sidebar {
+        position: fixed;
+        left: -300px;
+        top: 0;
+        bottom: 0;
+        height: 100vh;
+        z-index: 999;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.6);
+      }
+      .sidebar.open {
+        left: 0;
+      }
+
+      .topbar {
+        padding: 0 18px;
+        gap: 12px;
+      }
+
+      .search-box {
+        max-width: 320px;
+        flex: 1;
+      }
+
+      .view-container {
+        padding: 24px 20px 50px;
+      }
+    }
+
+    /* Mobile landscape & large phones (<= 768px) */
+    @media (max-width: 768px) {
+      .topbar {
+        padding: 0 14px;
+      }
+
+      .topbar-chips {
+        display: none !important;
+      }
+
+      .search-box {
+        width: 100%;
+        max-width: 100%;
+      }
+
+      .hero-banner {
+        padding: 18px 16px;
+      }
+      .hero-banner h1 {
+        font-size: 1.35rem;
+      }
+
+      .week-header {
+        padding: 14px 16px;
+      }
+      .week-title {
+        font-size: 0.95rem;
+      }
+
+      /* Stack Task Items for Comfortable Reading & Touching */
+      .task-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 12px 14px;
+      }
+
+      .task-left {
+        width: 100%;
+      }
+
+      .task-meta {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 8px;
+        flex-wrap: wrap;
+        border-top: 1px dashed rgba(255, 255, 255, 0.05);
+        padding-top: 8px;
+      }
+
+      .task-btn {
+        padding: 5px 10px;
+        font-size: 0.78rem;
+      }
+    }
+
+    /* Small Phones (<= 480px) */
+    @media (max-width: 480px) {
+      .view-container {
+        padding: 16px 12px 40px;
+      }
+
+      .hero-banner {
+        padding: 16px 12px;
+        border-radius: 10px;
+      }
+      .hero-banner h1 {
+        font-size: 1.2rem;
+      }
+
+      .chip {
+        font-size: 0.76rem;
+        padding: 4px 10px;
+      }
+
+      .week-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .week-badge {
+        font-size: 0.7rem;
+      }
+
+      .task-name {
+        font-size: 0.88rem;
+      }
+
+      .task-time {
+        font-size: 0.76rem;
+      }
+
+      .task-btn {
+        flex: 1 1 auto;
+        text-align: center;
+        justify-content: center;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="toggleMobileSidebar()"></div>
+
+  <!-- Left Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🚀</div>
+      <div>
+        <div class="brand-title">StudyHub Local</div>
+        <div style="font-size: 0.72rem; color: var(--text-muted);">DSA & System Design</div>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Navigation</div>
+      <div class="nav-item active" onclick="switchTab('study-plan')">
+        <span>📅</span> 12-Week Schedule
+      </div>
+      <div class="nav-item" onclick="switchTab('jvm-notes')">
+        <span>☕</span> JVM Architecture
+      </div>
+
+      <div class="nav-label" style="margin-top: 24px;">Quick Weeks</div>
+      <div id="quick-weeks"></div>
+    </div>
+
+    <div class="progress-box">
+      <div class="progress-title">
+        <span>Overall Progress</span>
+        <span id="progress-percent" style="font-weight: 700; color: var(--accent-emerald);">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-bar-fill"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-top: 6px;">
+        <span id="tasks-completed-text">0 / 0 completed</span>
+        <span onclick="resetProgress()" style="cursor: pointer; text-decoration: underline;">Reset</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main View Area -->
+  <main class="main">
+    <header class="topbar">
+      <button class="mobile-menu-btn" id="mobile-sidebar-toggle" onclick="toggleMobileSidebar()" aria-label="Toggle Navigation">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search problems, Java, React, SQL..." oninput="handleSearch()">
+      </div>
+      <div class="topbar-chips" style="display: flex; align-items: center; gap: 14px;">
+        <div class="chip" style="color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.3);">
+          ⚡ 1 Hr Weekday + Sat Deep Dive
+        </div>
+        <div class="chip" style="color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);">
+          🌴 Sunday Off
+        </div>
+      </div>
+    </header>
+
+    <div class="view-container">
+      <!-- Study Plan View -->
+      <div id="study-plan-tab" class="tab-content active">
+        <div class="hero-banner">
+          <h1>🎯 12-Week Study Dashboard</h1>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">
+            Click any task to check it off. Your progress is saved automatically to your local browser storage.
+          </p>
+          <div class="schedule-chips">
+            <span class="chip">📅 12 Weeks Structured</span>
+            <span class="chip">📚 58 Classic DSA Problems</span>
+            <span class="chip">☕ Java Core + Concurrency</span>
+            <span class="chip">⚛️ React Core + State</span>
+            <span class="chip">🏗️ System Design + Mocks</span>
+          </div>
+        </div>
+
+        <div id="weeks-container"></div>
+      </div>
+
+      <!-- JVM Architecture Notes View -->
+      <div id="jvm-notes-tab" class="tab-content">
+        <div class="hero-banner" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(168, 85, 247, 0.05)); border-color: rgba(56, 189, 248, 0.2);">
+          <h1 style="color: #38bdf8;">☕ JVM Architecture Master Guide</h1>
+          <p style="color: var(--text-secondary); font-size: 0.95rem;">
+            Full comprehensive notes, diagrams, class loader hierarchy, runtime memory breakdown, and 14 interview Q&As.
+          </p>
+        </div>
+
+        <div class="markdown-body" id="jvm-content"></div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // RAW DATA INJECTED
+    const jvmMarkdown = "# JVM Architecture: Comprehensive Deep Dive & Interview Guide\n\n> **Source:** Notion Notes (`JVM Architecture`)  \n> **Tech:** Java Core / Virtual Machine Internals  \n> **Status:** Reference & Study Guide  \n\n---\n\n> ***Goal:**\u00a0Understand the JVM from source code \u2192 bytecode \u2192 class loading \u2192 memory \u2192 execution.\nEach topic has:\n\u2022 **What it means**\n\u2022 **Simple words**\n\u2022 **Example**\n\u2022 **Interview point***\n---\n# **1. JDK, JRE and JVM**\n## **The big picture**\n![](./assets/jvm_overview.png)\n```plain text\nJDK\n\u251c\u2500\u2500 Development tools\n\u2502   \u251c\u2500\u2500 javac\n\u2502   \u251c\u2500\u2500 javadoc\n\u2502   \u2514\u2500\u2500 debugger/tools\n\u2502\n\u251c\u2500\u2500 Runtime libraries\n\u2502\n\u2514\u2500\u2500 JVM\n    \u251c\u2500\u2500 Class Loader\n    \u251c\u2500\u2500 Runtime Memory\n    \u2514\u2500\u2500 Execution Engine\n```\n### **JVM \u2014 Java Virtual Machine**\n**What it means:**\nThe JVM is the program that runs Java bytecode (`.class`\u00a0files).\n**Simple words:**\nYour Java code is not directly understood by the CPU. The JVM takes Java bytecode and runs it on the particular machine/OS.\n**Example:**\n```java\nSystem.out.println(\"Hello\");\n```\nAfter compilation:\n```plain text\nHello.java \u2192 Hello.class\n```\nThe\u00a0`.class`\u00a0file contains bytecode. A JVM on Windows, Linux or macOS can execute that bytecode.\n**Remember:**\n> *JVM =\u00a0**runs Java bytecode***\n---\n## **JRE \u2014 Java Runtime Environment**\n**What it means:**\nTraditionally, JRE means the runtime components needed to run Java applications: mainly the JVM plus Java runtime libraries.\n**Simple words:**\nEverything needed to\u00a0**run**\u00a0a Java program, but not the normal developer tools used to build it.\n**Example:**\nAn end user who only needs to run a Java application does not need\u00a0`javac`\u00a0just to execute an already compiled application.\n**Important modern note:**\nModern Oracle/OpenJDK distributions generally do not ship a separate JRE download like older Java versions did. The term is still useful for understanding the architecture.\n**Remember:**\n> *JRE =\u00a0**runtime environment***\n---\n## **JDK \u2014 Java Development Kit**\n**What it means:**\nThe JDK is the development kit used to build Java applications. It includes the JVM, runtime libraries, and development tools.\n**Simple words:**\nThe JDK is what a Java developer normally installs.\n**Example:**\n```bash\njavac Main.java\njava Main\n```\n- `javac`\u00a0\u2192 compiles the program\n- `java`\u00a0\u2192 launches the JVM to run it\n**Remember:**\n> *JDK =\u00a0**develop**\nJRE =\u00a0**run**\u00a0(traditional architectural concept)\nJVM =\u00a0**execute bytecode***\n---\n# **2. Java Compilation and Execution Flow**\nThe complete flow is:\n```plain text\n                 COMPILE\nMain.java \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2192 Main.class\n(source code)                    (bytecode)\n                                      |\n                                      v\n                              Class Loader\n                                      |\n                                      v\n                                   Linking\n                                      |\n                                      v\n                                Initialization\n                                      |\n                                      v\n                              Runtime Memory\n                                      |\n                                      v\n                              Execution Engine\n                              /      |       \\\n                       Interpreter   JIT       JNI\n                                      |\n                                      v\n                                Native machine\n                                  execution\n```\n## **Step 1 \u2014 Compilation**\n**What happens?**\n`javac`\u00a0converts Java source code into bytecode.\n```bash\njavac Main.java\n```\nResult:\n```plain text\nMain.java \u2192 Main.class\n```\n**Simple words:**\nJava source code is converted into a common intermediate language called\u00a0**bytecode**.\n**Example:**\n```java\nclass Main {\n    public static void main(String[] args) {\n        System.out.println(\"Hello\");\n    }\n}\n```\nbecomes:\n```plain text\nMain.class\n```\n**Interview point:**\n> *`javac`**\u00a0compiles\u00a0**`.java`**\u00a0\u2192\u00a0**`.class`**.*\n---\n# **3. Class Loader Subsystem**\nBefore the JVM can execute a class, it needs to load that class.\nThe class-loading process can be remembered as:\n```plain text\nLoading\n   \u2193\nLinking\n   \u251c\u2500\u2500 Verification\n   \u251c\u2500\u2500 Preparation\n   \u2514\u2500\u2500 Resolution\n   \u2193\nInitialization\n```\n---\n## **3.1 Loading**\n**What happens?**\nThe Class Loader finds the\u00a0`.class`\u00a0file and loads its binary representation into the JVM.\n**Simple words:**\nThe JVM finds the class and brings it into the runtime.\n**Example:**\nIf your program uses:\n```java\nUserService service = new UserService();\n```\nthe JVM needs\u00a0`UserService`\u00a0available before it can use the class.\n---\n## **3.2 Parent Delegation Model**\nClass loaders generally follow\u00a0**parent delegation**.\n```plain text\nBootstrap ClassLoader\n        \u2191\n        \u2502\nPlatform ClassLoader\n        \u2191\n        \u2502\nApplication ClassLoader\n```\nWhen the application class loader receives a request, it normally asks its parent first.\n### **Why?**\nTo avoid application code replacing important Java platform classes.\n**Simple example:**\nImagine you create your own class called:\n```plain text\njava.lang.String\n```\nThe JVM should not simply use your version instead of the real Java\u00a0`String`.\nThe parent delegation mechanism helps protect the platform classes.\n---\n## **3.3 Types of Class Loaders**\n### **Bootstrap ClassLoader**\n**What it does:**\nLoads fundamental Java platform classes/modules.\n**Simple words:**\nThe top-level loader responsible for core Java platform classes.\n**Example:**\n```java\njava.lang.String\n```\n---\n### **Platform ClassLoader**\n**What it does:**\nLoads Java platform classes/modules that are above the core base modules.\n**Simple words:**\nLoads many standard Java platform libraries that are not loaded by the Bootstrap loader.\n**Important:**\nIn modern Java, the old\u00a0**Extension ClassLoader**\u00a0concept was replaced by the\u00a0**Platform ClassLoader**.\n---\n### **Application (System) ClassLoader**\n**What it does:**\nLoads application classes and classes available through the application\u2019s class path/module path.\n**Simple words:**\nUsually loads the code you wrote and many third-party libraries.\n**Example:**\n```plain text\nUserService.class\nSpring classes\nHibernate classes\n```\n---\n# **4. Linking**\nLinking has three major parts:\n```plain text\nVerification\n     \u2193\nPreparation\n     \u2193\nResolution\n```\n## **4.1 Verification**\n**What happens?**\nThe JVM checks that the loaded class file is structurally valid and follows JVM rules.\n**Simple words:**\nThe JVM checks whether the bytecode is safe and valid to use.\n**Example:**\nIf a class file is corrupted or violates JVM bytecode rules, the JVM can reject it.\n---\n## **4.2 Preparation**\n**What happens?**\nThe JVM prepares the memory needed for class-level data and gives static fields their\u00a0**default values**.\nFor example:\n```java\nstatic int count = 5;\n```\nDuring preparation, the static field gets its default value:\n```plain text\ncount = 0\n```\nThe explicit value\u00a0`5`\u00a0is assigned later during initialization.\n**Simple words:**\nFirst, the JVM prepares the space and default values. The actual values written in the code come later.\n---\n## **4.3 Resolution**\n**What happens?**\nThe JVM can resolve symbolic references in the class file to actual runtime references.\n**Simple words:**\nThe bytecode may refer to something by name/symbol. Resolution connects that reference to the actual runtime entity.\n**Important:**\nDo\u00a0**not**\u00a0think of this as simply \u201creplacing a class name with a RAM address.\u201d The JVM specification allows different implementation strategies.\n---\n# **5. Initialization**\nInitialization is when the JVM executes:\n- Static field initializers\n- Static initialization blocks\nExample:\n```java\nclass Counter {\n    static int count = 5;\n\n    static {\n        System.out.println(\"Initialized\");\n    }\n}\n```\nDuring initialization:\n```plain text\ncount = 5\n```\nand the static block executes.\n**Simple words:**\nPreparation gives default values. Initialization runs your static setup code.\n---\n# **6. JVM Runtime Data Areas**\nThe JVM memory model can be understood as:\n```plain text\n                JVM RUNTIME DATA AREAS\n\n        \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n        \u2502        SHARED BY THREADS      \u2502\n        \u2502                               \u2502\n        \u2502  Heap                         \u2502\n        \u2502  Method Area / implementation \u2502\n        \u2502  dependent class metadata     \u2502\n        \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n\n        \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n        \u2502       PRIVATE TO EACH THREAD  \u2502\n        \u2502                               \u2502\n        \u2502  JVM Stack                    \u2502\n        \u2502  PC Register                  \u2502\n        \u2502  Native Method Stack*         \u2502\n        \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n> *`*`**\u00a0The JVM specification describes a native method stack, but the exact implementation is JVM-dependent.*\nThe most important distinction:\n### **Shared**\n- Heap\n- Method-area information / class metadata\n### **Thread-private**\n- JVM Stack\n- PC Register\n- Native Method Stack\n---\n# **7. Heap Memory**\n**What it means:**\nThe heap is the runtime memory area where objects and arrays are allocated.\n**Simple words:**\nThe heap is the main shared memory area where Java objects live.\n**Example:**\n```java\nUser user = new User();\n```\nThe\u00a0`User`\u00a0object is allocated on the heap.\nThe variable\u00a0`user`\u00a0is a reference stored in the current method\u2019s frame.\n---\n## **Heap and Garbage Collection**\nThe JVM\u2019s Garbage Collector manages heap memory.\n```plain text\nCreate object\n     \u2193\nObject is used\n     \u2193\nObject becomes unreachable\n     \u2193\nGC may reclaim its memory\n```\nExample:\n```java\nUser user = new User();\n\nuser = null;\n```\nIf there are no other references to the object, it becomes eligible for garbage collection.\n> ***Eligible for GC**\u00a0does not mean \u201cGC immediately deletes it.\u201d*\n---\n# **8. Young Generation and Old Generation**\nMany common JVM garbage collectors organize the heap into generations, although the exact layout depends on the collector.\nA traditional generational model looks like:\n```plain text\nHeap\n\u251c\u2500\u2500 Young Generation\n\u2502   \u251c\u2500\u2500 Eden\n\u2502   \u251c\u2500\u2500 Survivor 0\n\u2502   \u2514\u2500\u2500 Survivor 1\n\u2502\n\u2514\u2500\u2500 Old Generation\n```\n## **Eden**\nNew objects are typically allocated in the Eden area in collectors that use this generational layout.\n**Simple words:**\nThe first area where many new objects are created.\n**Example:**\n```java\nUser user = new User();\n```\nThe object may initially be allocated in Eden.\n---\n## **Survivor Spaces**\nObjects that survive young-generation collections can be moved through survivor spaces.\n**Simple words:**\nTemporary holding areas for objects that survived a young-generation GC.\n---\n## **Old Generation**\nObjects that remain alive for a long time may eventually be promoted to the old generation.\n**Simple words:**\nA place for long-lived objects.\n**Example:**\nA long-lived application object that stays reachable for a long time may eventually be promoted.\n> *Do not assume that every Spring singleton is automatically in a particular heap generation. Its GC generation depends on its lifetime and the selected collector.*\n---\n# **9. JVM Stack**\nEach thread has its own JVM stack.\n```plain text\nThread 1\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 method C frame   \u2502 \u2190 currently executing\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 method B frame   \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 method A frame   \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n\nThread 2\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 method X frame   \u2502\n\u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n\u2502 method Y frame   \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\nEach method call creates a\u00a0**stack frame**.\nWhen the method finishes, its frame is removed.\n**Simple words:**\nThink of a stack as a personal pile of method calls for each thread.\n---\n## **Example**\n```java\nvoid main() {\n    processOrder();\n}\n\nvoid processOrder() {\n    calculateTax();\n}\n\nvoid calculateTax() {\n    int price = 100;\n}\n```\nAt one point, the stack may look conceptually like:\n```plain text\ncalculateTax()    \u2190 current method\nprocessOrder()\nmain()\n```\nWhen\u00a0`calculateTax()`\u00a0finishes:\n```plain text\nprocessOrder()\nmain()\n```\n---\n# **10. What is inside a Stack Frame?**\nA stack frame contains information needed to execute a method.\nImportant parts include:\n### **Local Variables**\nStores method parameters and local variables.\nExample:\n```java\nvoid calculate() {\n    int price = 100;\n}\n```\nThe local variable\u00a0`price`\u00a0is part of the method\u2019s frame.\nFor an object variable:\n```java\nUser user = new User();\n```\nthe reference to the object is stored as part of the frame; the object itself is on the heap.\n---\n### **Operand Stack**\nThe JVM is a stack-based execution model, so bytecode instructions use an operand stack for many operations.\nExample:\n```java\nint result = a + b;\n```\nConceptually:\n```plain text\npush a\npush b\nadd\nstore result\n```\n**Simple words:**\nA temporary workspace used by bytecode instructions.\n---\n### **Frame Data**\nA frame also contains information needed for things such as method return and exception handling.\n**Simple words:**\nInformation the JVM needs to continue execution correctly.\n---\n# **11. PC Register**\nPC means\u00a0**Program Counter**.\nEach thread has its own PC register.\n**What it does:**\nIt keeps track of the JVM instruction currently being executed (or the next instruction, depending on how the implementation represents it).\n**Simple words:**\nIt is like a bookmark showing where that thread is in its bytecode execution.\n**Example:**\n```plain text\nInstruction 10\nInstruction 11\nInstruction 12  \u2190 current position\nInstruction 13\n```\nWhen a thread switches away and later comes back, the JVM needs to know where to continue.\n**Important:**\nFor a thread executing a native method, the JVM specification does not define the PC register\u2019s value in the same way as for JVM instructions.\n---\n# **12. Native Method Stack**\nA JVM implementation may use a separate native method stack for native method execution.\n**Simple words:**\nIt supports execution when Java code calls native code implemented outside normal Java bytecode execution.\nNative code is often written in languages such as C/C++.\n**Example:**\n```plain text\nJava code\n   \u2193\nnative method\n   \u2193\nOS / native library\n```\nThe exact behavior and implementation are JVM-dependent.\n---\n# **13. Metaspace and the Method Area**\nThis is an important place where the original notes needed correction.\n## **Method Area**\nThe\u00a0**Method Area**\u00a0is a JVM specification concept for storing per-class/per-interface information.\nIt is shared among threads.\nThe JVM specification does not require a specific physical memory implementation for it.\n## **Metaspace**\nIn HotSpot JVMs, class metadata is stored in\u00a0**Metaspace**, which uses native memory.\n**Simple words:**\nThink of it as an area containing information\u00a0**about classes**, rather than the normal Java objects themselves.\nExamples of class-related information include:\n- Class metadata\n- Method metadata\n- Field information\n- Runtime constant-pool-related information\n### **Important correction**\nDo\u00a0**not**\u00a0memorize:\n> *\u201cMetaspace stores static variables and the String Pool.\u201d*\nThat is an oversimplification and is misleading.\n- String objects/string pool are associated with the\u00a0**heap**\u00a0in modern HotSpot JVMs.\n- Static fields are associated with classes, but the JVM specification does not require that they physically live in Metaspace.\n---\n# **14. Execution Engine**\nAfter classes are loaded and initialized, the JVM executes their bytecode.\nThe main concepts are:\n```plain text\nExecution Engine\n\u251c\u2500\u2500 Interpreter\n\u251c\u2500\u2500 JIT Compiler\n\u2514\u2500\u2500 Garbage Collection\n```\nJNI is better thought of as a\u00a0**bridge/API for native interaction**, not as a core execution engine component.\n---\n# **15. Interpreter**\n**What it does:**\nExecutes bytecode instructions.\n**Simple words:**\nIt starts executing code without needing to compile the entire application to native machine code first.\n**Why is it useful?**\nIt allows the JVM to start running code quickly.\n---\n# **16. JIT Compiler**\nJIT =\u00a0**Just-In-Time Compiler**\n**What it does:**\nThe JVM can identify frequently executed (\u201chot\u201d) code and compile it into native machine code at runtime.\n```plain text\nBytecode\n   \u2193\nInterpreter\n   \u2193\nHot code detected\n   \u2193\nJIT compilation\n   \u2193\nNative machine code\n```\n**Simple words:**\nIf some code runs again and again, the JVM can optimize it so that future executions are faster.\n**Example:**\n```java\nfor (int i = 0; i < 1_000_000; i++) {\n    calculate(i);\n}\n```\nIf\u00a0`calculate()`\u00a0becomes a hot method, the JVM may JIT-compile and optimize it.\n**Important:**\nDo not memorize a fixed number such as \u201cJIT compiles after exactly 1,000 iterations.\u201d The actual thresholds and behavior depend on the JVM, version, flags, profiling information, and runtime conditions.\n---\n# **17. Interpreter vs JIT**\n\n| **Interpreter** | **JIT** |\n| :--- | :--- |\n| Executes bytecode | Compiles hot bytecode to native code |\n| Helps quick startup | Helps long-running code become faster |\n| Does not need to compile every method | Compiles selected hot code |\n| Useful early in execution | Especially useful after code becomes hot |\n\n### **Easy analogy**\nThink of a person reading a recipe.\n**Interpreter:**\nReads each instruction whenever it is needed.\n**JIT:**\nNotices that you cook the same recipe every day and prepares a faster shortcut for it.\n---\n# **18. Garbage Collector**\n**What it does:**\nAutomatically reclaims heap memory that is no longer reachable/usable by the application.\n**Simple words:**\nThe GC is the JVM\u2019s automatic cleanup system.\nExample:\n```java\nUser user = new User();\n\nuser = null;\n```\nIf nothing else refers to the\u00a0`User`\u00a0object, it becomes unreachable and may later be reclaimed by GC.\n### **Important**\nYou cannot normally force exactly when an object will be collected.\n```java\nSystem.gc();\n```\nis only a request/hint to the JVM, not a guarantee of immediate collection.\n---\n# **19. GC Terminology**\nThe terms\u00a0**Minor GC**,\u00a0**Major GC**, and\u00a0**Full GC**\u00a0are commonly used, but their exact meaning can vary between JVMs and garbage collectors.\nA safer interview explanation is:\n- **Young/Minor GC:**\u00a0commonly refers to collection focused on the young generation.\n- **Major GC:**\u00a0often used for collection involving the old generation, but the exact definition is collector-dependent.\n- **Full GC:**\u00a0generally means a collection involving a much broader portion of the heap and may involve class metadata/metaspace-related work depending on the collector and JVM.\n**Avoid saying:**\n> *\u201cFull GC always stops everything and always cleans Heap + Metaspace.\u201d*\nThat is too absolute.\n---\n# **20. JNI \u2014 Java Native Interface**\nJNI =\u00a0**Java Native Interface**\n**What it does:**\nProvides a mechanism for Java code to interact with native code.\n```plain text\nJava\n  \u2193\n JNI\n  \u2193\nNative code (for example C/C++)\n  \u2193\nOS / native library\n```\n**Simple words:**\nJNI is a bridge between Java and native code.\n**Example:**\nA Java application may use a native library written in C/C++ for a platform-specific operation.\n> *Do not assume every API that feels \u201csystem-level\u201d necessarily switches through JNI in the same simple way. The exact implementation is JVM/platform dependent.*\n---\n# **21. Shared vs Thread-Private Memory**\nThis is one of the most important interview concepts.\n\n| **Area** | **Shared?** | **Main idea** |\n| :--- | :--- | :--- |\n| Heap | Yes | Objects and arrays |\n| Method Area / class metadata | Yes | Class-related information |\n| JVM Stack | No | Each thread has its own stack |\n| PC Register | No | Each thread has its own execution state |\n| Native Method Stack | No | Per-thread native execution state, where used |\n\n### **Easy way to remember**\n```plain text\nHEAP\n\u2193\nEveryone can potentially access the same objects\n        \u2191\n        \u2502\n   Multiple Threads\n\nSTACK\n\u2193\nEach thread has its own method-call stack\n```\n---\n# **22. Heap vs Stack \u2014 The Most Important Difference**\nConsider:\n```java\nvoid test() {\n    int x = 10;\n    User user = new User();\n}\n```\nConceptually:\n```plain text\nThread's Stack\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 x = 10               \u2502\n\u2502 user = reference \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518      \u2502\n                              \u2193\n                         Heap\n                    \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                    \u2502 User object    \u2502\n                    \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n### **Stack**\n- Per thread\n- Stores method frames\n- Stores local variables/references as part of frames\n- Automatically managed as methods are called/returned\n### **Heap**\n- Shared between threads\n- Stores objects and arrays\n- Managed by garbage collection\n**Easy memory trick:**\n> ***Stack = method execution**\n**Heap = objects***\nThis is a useful simplification, not a complete description of every JVM implementation detail.\n---\n# **23. Common JVM Memory Errors**\n## **23.1\u00a0****`OutOfMemoryError: Java heap space`**\n**Meaning:**\nThe JVM could not allocate an object because the heap did not have enough usable space.\n**Simple words:**\nThe heap cannot fit another required object.\n**Example:**\n```java\nList<byte[]> list = new ArrayList<>();\n\nwhile (true) {\n    list.add(new byte[1_000_000]);\n}\n```\nThe list keeps references to the arrays, so the objects remain reachable and the heap can eventually run out of space.\n---\n## **23.2\u00a0****`StackOverflowError`**\n**Meaning:**\nA thread\u2019s JVM stack cannot support more stack frames.\n**Simple words:**\nThere are too many nested method calls.\n**Example:**\n```java\nvoid recursiveMethod() {\n    recursiveMethod();\n}\n```\nThere is no base case, so more and more stack frames are created until the stack limit is reached.\n---\n## **23.3\u00a0****`OutOfMemoryError: Metaspace`**\n**Meaning:**\nThe JVM cannot allocate enough memory for class metadata in Metaspace.\n**Simple words:**\nThe JVM has run out of available native memory for class metadata, subject to configured limits.\n**Possible example:**\nAn application repeatedly generates/loads classes and prevents them from being unloaded, causing class metadata usage to grow.\n---\n# **24. One Complete Example**\nConsider:\n```java\nclass User {\n    static int count = 0;\n\n    String name;\n\n    User(String name) {\n        this.name = name;\n        count++;\n    }\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        User user = new User(\"Divesh\");\n    }\n}\n```\nWhat happens?\n### **Step 1 \u2014 Compilation**\n```plain text\nMain.java\n   \u2193 javac\nMain.class\nUser.class\n```\n### **Step 2 \u2014 Class Loading**\nThe JVM loads the required classes.\n```plain text\nClass Loader\n   \u2193\nMain\nUser\n```\n### **Step 3 \u2014 Linking**\nThe JVM performs:\n```plain text\nVerification\nPreparation\nResolution\n```\nDuring preparation:\n```plain text\nUser.count = 0\n```\n### **Step 4 \u2014 Initialization**\nStatic initialization runs.\n```plain text\nUser.count = 0\n```\nThere is no explicit static initializer changing it, so it remains\u00a0`0`.\n### **Step 5 \u2014\u00a0****`main()`****\u00a0starts**\nA thread executes\u00a0`main()`.\nA stack frame is created for\u00a0`main()`.\n### **Step 6 \u2014\u00a0****`new User(\"Divesh\")`**\nA\u00a0`User`\u00a0object is created on the heap.\n```plain text\nStack                    Heap\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510        \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 user \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2192 User            \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518        \u2502 name = \"Divesh\" \u2502\n                         \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n### **Step 7 \u2014 Constructor runs**\n```java\nthis.name = name;\ncount++;\n```\nNow:\n```plain text\nUser.count = 1\n```\n### **Step 8 \u2014 Object becomes unreachable**\nWhen\u00a0`user`\u00a0is no longer referenced by any live path, the object becomes eligible for garbage collection.\n---\n# **25. Interview Questions You Should Be Able to Answer**\n### **Q1. What is the difference between JDK, JRE and JVM?**\n**Answer:**\n```plain text\nJDK \u2192 Development kit\nJRE \u2192 Runtime environment (traditional concept)\nJVM \u2192 Executes bytecode\n```\n---\n### **Q2. What does\u00a0****`javac`****\u00a0do?**\nIt compiles:\n```plain text\n.java \u2192 .class\n```\nThe\u00a0`.class`\u00a0file contains JVM bytecode.\n---\n### **Q3. Why is Java platform-independent?**\nBecause Java source is compiled into platform-independent bytecode, and different platforms provide JVM implementations that execute that bytecode.\n> *The JVM itself is platform-specific; the bytecode is designed to be platform-independent.*\n---\n### **Q4. What is parent delegation?**\nA class loader normally asks its parent to load a class before trying to load it itself.\n**Why?**\nTo avoid duplicate/conflicting definitions of platform classes and improve security.\n---\n### **Q5. What happens during linking?**\n```plain text\nVerification\nPreparation\nResolution\n```\n---\n### **Q6. What is the difference between preparation and initialization?**\n**Preparation:**\n```plain text\nstatic int count = 5;\n          \u2193\ndefault value\ncount = 0\n```\n**Initialization:**\n```plain text\ncount = 5\n```\nThe class\u2019s static initialization code runs.\n---\n### **Q7. Where are Java objects stored?**\nNormally, objects are allocated on the\u00a0**heap**.\n---\n### **Q8. Is the heap shared?**\nYes. The heap is shared among JVM threads.\n---\n### **Q9. Is the JVM stack shared?**\nNo. Each thread has its own JVM stack.\n---\n### **Q10. What causes StackOverflowError?**\nUsually excessive/nested method calls, commonly infinite recursion.\n---\n### **Q11. What causes\u00a0****`OutOfMemoryError: Java heap space`****?**\nThe JVM cannot allocate a required object because there is not enough usable heap memory.\n---\n### **Q12. What is JIT?**\nJIT compiles frequently executed bytecode into native machine code at runtime and can optimize it using runtime information.\n---\n### **Q13. Interpreter vs JIT?**\n```plain text\nInterpreter \u2192 executes bytecode\nJIT         \u2192 compiles hot code to native code\n```\n---\n### **Q14. What is Metaspace?**\nIn HotSpot, Metaspace is native memory used for class metadata.\nDo not equate Metaspace with \u201cwhere all static variables and strings live.\u201d\n---\n# **26. Final Mental Model**\nIf you remember only one diagram, remember this:\n```plain text\n                  Java Source\n                  Main.java\n                      |\n                    javac\n                      |\n                      v\n                  Bytecode\n                 Main.class\n                      |\n                      v\n              +---------------+\n              | Class Loader  |\n              +---------------+\n                      |\n              Loading \u2192 Linking\n                      |\n                Initialization\n                      |\n                      v\n              +---------------+\n              | JVM Memory    |\n              |               |\n              | Heap          | \u2190 Objects\n              | Class metadata | \u2190 Class information\n              |               |\n              | Stack         | \u2190 Method execution\n              | PC Register  | \u2190 Current execution position\n              +---------------+\n                      |\n                      v\n              +---------------+\n              | Execution     |\n              | Engine        |\n              |               |\n              | Interpreter   |\n              | JIT           |\n              +---------------+\n                      |\n                      v\n              Native machine\n                 execution\n```\n## **Super-short revision**\n```plain text\nJDK\n\u2192 Build Java applications\n\nJRE\n\u2192 Traditional runtime package\n\nJVM\n\u2192 Runs bytecode\n\njavac\n\u2192 .java \u2192 .class\n\nClass Loader\n\u2192 Loads classes\n\nLinking\n\u2192 Verify \u2192 Prepare \u2192 Resolve\n\nInitialization\n\u2192 Run static initialization\n\nHeap\n\u2192 Objects / arrays\n\nStack\n\u2192 Method frames per thread\n\nPC Register\n\u2192 Current JVM execution position per thread\n\nMetaspace (HotSpot)\n\u2192 Class metadata in native memory\n\nInterpreter\n\u2192 Executes bytecode\n\nJIT\n\u2192 Compiles hot code to native code\n\nGC\n\u2192 Reclaims unreachable heap objects\n\nJNI\n\u2192 Bridge to native code\n\nHeap\n\u2192 Shared\n\nStack\n\u2192 Per thread\n```\n## **The 5 things to remember for interviews**\n1. **`.java`****\u00a0\u2192\u00a0****`javac`****\u00a0\u2192\u00a0****`.class`****\u00a0bytecode**\n2. **Class Loader \u2192 Loading \u2192 Linking \u2192 Initialization**\n3. **Heap is shared; each thread has its own stack**\n4. **Interpreter executes; JIT optimizes hot code**\n5. **GC reclaims unreachable objects; it does not immediately delete every object that becomes unused**\n\n# **27. Deeper Understanding \u2014 Additional Explanations & Examples**\nThis section adds the useful explanations and examples from the second set of notes,\u00a0while correcting statements that are too implementation-specific or simplified.\n## **27.1 JVM Architecture \u2014 One Complete Story**\nInstead of remembering every JVM component separately,\u00a0understand the complete flow with one example:\n```java\nclass User{staticint count=0;    String name;    User(String name){this.name= name;        count++;}}publicclass Main{publicstaticvoid main(String[] args){        User u=new User(\"Divesh\");}}\n```\n### **What happens?**\n```plain text\nMain.java   \u2193javac   \u2193Main.class + User.class   \u2193Class Loader   \u2193Loading   \u2193Linking   \u251c\u2500\u2500 Verification   \u251c\u2500\u2500 Preparation   \u2514\u2500\u2500 Resolution (when needed)   \u2193Initialization   \u2193main() starts   \u2193new User(\"Divesh\")   \u2193User object is created on Heap   \u2193Constructor runs   \u2193count = 1   \u2193u stores a reference to that object   \u2193Program continues   \u2193When object is no longer reachable \u2192 eligible for GC\n```\n### **Easy way to remember**\n```plain text\n.class file   \u2193Class Loader   \u2193Memory   \u2193Execution Engine   \u2193Program runs\n```\n---\n## **27.2 Class Loader Delegation \u2014 Simple Example**\nSuppose your application contains:\n```java\nUserService service=new UserService();\n```\nThe JVM needs to load\u00a0`UserService.class`.\nThe Application ClassLoader follows the parent delegation model.\n```plain text\nApplication ClassLoader        \u2193Platform ClassLoader        \u2193Bootstrap ClassLoader\n```\nThe request moves upward first.\n```plain text\n\"Can Bootstrap load this class?\"        \u2193 No\"Can Platform load this class?\"        \u2193 No\"Can Application load this class?\"        \u2193 YesLoad UserService\n```\n### **Easy analogy**\nThink of a company hierarchy:\n```plain text\nEmployee   \u2193Manager   \u2193Director\n```\nIf an employee cannot solve something,\u00a0they ask the manager.\u00a0The manager asks the director if required.\nSimilarly:\n```plain text\nAsk parent first      \u2193Parent cannot load      \u2193Try yourself\n```\n---\n## **27.3 Linking \u2014 Why Preparation and Initialization Are Different**\nConsider:\n```java\nclass Test{staticint count=10;}\n```\nIt is easy to think:\n```plain text\nLoad class\u2193count = 10\n```\nBut preparation and initialization are different stages.\n### **Preparation**\nMemory is prepared for the class's static state.\nConceptually:\n```plain text\ncount \u2192 0\n```\n### **Initialization**\nThe class's initialization code runs.\nNow:\n```plain text\ncount \u2192 10\n```\nSo remember:\n```plain text\nPreparation\u2192 memory/default valuesInitialization\u2192 actual static initialization code\n```\nThe exact physical location of every piece of class-related data is JVM implementation dependent.\n---\n## **27.4 Method Area vs Metaspace**\nThese two terms are often mixed together.\n### **Method Area**\n**Method Area is a JVM specification concept.**\nIt describes an area where class-level information is stored,\u00a0such as:\n- Class metadata\n- Method information\n- Runtime constant-pool information\n- Other class-related structures\n### **Metaspace**\n**Metaspace is the HotSpot JVM's implementation of class metadata storage.**\nIn modern HotSpot JVMs,\u00a0Metaspace uses native memory rather than the Java heap.\n### **Important correction**\nDo not memorize:\n```plain text\nMethod Area = exactly Metaspace\n```\nor:\n```plain text\nAll static variables = Metaspace\n```\nas universal rules.\nA better interview answer is:\n> Method Area is a JVM specification concept,\u00a0while Metaspace is the HotSpot implementation used for class metadata.\nAlso remember:\n```plain text\nPermGen   \u2193 Java 8Metaspace\n```\nJava 8 removed the traditional PermGen implementation and moved class metadata to Metaspace.\n---\n## **27.5 Heap \u2014 Object vs Reference**\nConsider:\n```java\nUser u=new User();\n```\nThere are two important things here:\n```plain text\nu\n```\nand\n```plain text\nnew User()\n```\nConceptually:\n```plain text\nStack+----------------+| u \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500|------++----------------+      |                        \u2193                     Heap                +----------------+                | User object    |                | name = ...     |                +----------------+\n```\nSo:\n- The\u00a0**object**\u00a0is created on the Heap.\n- The local variable\u00a0`u`\u00a0is a\u00a0**reference**\u00a0stored in the current stack frame.\nThis distinction is important.\n---\n## **27.6 Heap Generations \u2014 Object Journey**\nA traditional generational heap model is:\n```plain text\nYoung Generation\u251c\u2500\u2500 Eden\u251c\u2500\u2500 Survivor 0\u2514\u2500\u2500 Survivor 1Old Generation\n```\nFor example:\n```java\nUser user=new User();\n```\nA conceptual journey can be:\n```plain text\nnew User()    \u2193Eden    \u2193Survivor    \u2193Old Generation\n```\nThe basic idea is:\n> Most objects die young,\u00a0while objects that survive collections for longer may be promoted.\nDo not memorize a fixed statement such as:\n```plain text\nAfter exactly 1 or 2 GC cycles \u2192 Old Generation\n```\nThe actual promotion behavior depends on the garbage collector and its heuristics.\n---\n## **27.7 Stack Frame \u2014 Complete Example**\nConsider:\n```java\nvoid compute(int a,int b){int c= a+ b;}\n```\nWhen:\n```java\ncompute(2,3);\n```\nis called,\u00a0a stack frame is created for that method.\nConceptually:\n```plain text\nStack\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\u2502 compute() frame     \u2502\u2502                     \u2502\u2502 a = 2               \u2502\u2502 b = 3               \u2502\u2502 c = 5               \u2502\u2502 operand stack       \u2502\u2502 frame data          \u2502\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\nWhen the method returns:\n```plain text\ncompute() frame      \u2193popped\n```\nEach method invocation gets its own frame.\n---\n## **27.8 Recursion \u2014 Why StackOverflowError Happens**\nConsider:\n```java\nvoid recursiveMethod(){    recursiveMethod();}\n```\nEvery call creates another stack frame:\n```plain text\nrecursiveMethod()recursiveMethod()recursiveMethod()recursiveMethod()...\n```\nEventually,\u00a0the thread's stack cannot accommodate another frame.\nResult:\n```plain text\nStackOverflowError\n```\n### **Easy rule**\n```plain text\nToo many method calls / frames        \u2193Stack cannot grow further        \u2193StackOverflowError\n```\n---\n## **27.9 Operand Stack \u2014 Simple Example**\nThe operand stack is used while executing bytecode instructions.\nFor:\n```java\nint result= a+ b;\n```\nConceptually:\n```plain text\nLoad a   \u2193Push a onto operand stackLoad b   \u2193Push b onto operand stackiadd   \u2193Take a and b   \u2193Push a + bStore result\n```\nFor:\n```plain text\na = 2b = 3\n```\nthe conceptual operand-stack flow is:\n```plain text\n[] \u2193[2] \u2193[2, 3] \u2193[5] \u2193[]\n```\n---\n## **27.10 PC Register \u2014 Think of It as a Bookmark**\nEvery JVM thread has its own PC\u00a0(Program Counter)\u00a0register.\nThink of it as a bookmark:\n```plain text\nThread 1   \u2193current JVM instruction positionThread 2   \u2193different JVM instruction position\n```\nSo:\n```plain text\nPC Register    \u2193\"Where is this thread in its JVM instruction execution?\"\n```\nThe PC is thread-specific.\nFor a thread executing native code,\u00a0the JVM specification does not require a particular defined value for the PC register.\n---\n## **27.11 Native Methods \u2014 Simple Example**\nJava can call functionality implemented outside Java bytecode.\nFor example:\n```java\nSystem.currentTimeMillis();\n```\nThis is a useful example for understanding native-method support.\nConceptually:\n```plain text\nJava code   \u2193Native method/API   \u2193Platform-specific implementation   \u2193Operating system / hardware resources\n```\nJNI\u00a0(Java Native Interface)\u00a0provides a standard mechanism for Java code and native code to interact.\nThe exact internal implementation path of a particular JDK method can vary.\n---\n## **27.12 Interpreter \u2014 Why It Exists**\nThe JVM can execute bytecode using an interpreter.\nConceptually:\n```plain text\nBytecode   \u2193Interpreter   \u2193Native instructions   \u2193CPU\n```\nThe interpreter allows execution to begin without first compiling the entire application into optimized native code.\nRepeatedly interpreting very frequently executed code has overhead,\u00a0which is where JIT compilation helps.\n---\n## **27.13 JIT \u2014 Hot Code Example**\nConsider:\n```java\nfor(int i=0; i<1_000_000; i++){    calculate(i);}\n```\nIf\u00a0`calculate()`\u00a0is executed many times,\u00a0the JVM can identify it as frequently executed\u00a0(\"hot\")\u00a0code.\nConceptually:\n```plain text\nBytecode   \u2193Interpreter   \u2193Profiling   \u2193calculate() becomes hot   \u2193JIT compiler   \u2193Optimized native machine code   \u2193Reuse compiled code\n```\nDo not say:\n```plain text\nAfter exactly 1000 executions \u2192 JIT compiles\n```\nThere is no universal fixed number like that.\u00a0The exact thresholds depend on the JVM,\u00a0version,\u00a0flags,\u00a0compiler,\u00a0and runtime profiling.\n---\n## **27.14 Garbage Collection \u2014 Simple Object Journey**\nConsider:\n```java\nUser user=new User();user=null;\n```\nInitially:\n```plain text\nStack reference     \u2193   User object     \u2193   Heap\n```\nAfter:\n```java\nuser=null;\n```\nthe local reference no longer points to the object.\nIf there are no other reachable references:\n```plain text\nNo reachable reference        \u2193Object becomes eligible for GC\n```\nEligible for GC does\u00a0**not**\u00a0mean GC happens immediately.\nSimilarly:\n```java\nSystem.gc();\n```\nis only a request/hint to the JVM.\u00a0It does not guarantee immediate garbage collection.\n---\n## **27.15 OutOfMemoryError vs StackOverflowError**\n### **StackOverflowError**\nUsually caused by excessive stack usage,\u00a0commonly deep or unbounded recursion.\n```java\nvoid call(){    call();}\n```\n```plain text\nToo many stack frames        \u2193StackOverflowError\n```\n### **OutOfMemoryError**\nOccurs when the JVM cannot satisfy a memory allocation request from an applicable memory area.\nExample:\n```java\nList<byte[]> list=new ArrayList<>();while(true){    list.add(newbyte[1024*1024]);}\n```\nEventually,\u00a0available memory can be exhausted.\n```plain text\nMemory cannot satisfy allocation        \u2193OutOfMemoryError\n```\n---\n## **27.16 JDK vs JRE vs JVM \u2014 Restaurant Analogy**\nA simple analogy:\n```plain text\nJDK = Complete restaurant      \u2193Kitchen + ingredients + tools + dining areaJRE = Environment needed to use the restaurant      \u2193Everything needed to run the applicationJVM = The kitchen/engine      \u2193Actually executes the Java bytecode\n```\nTechnically:\n```plain text\nJDK \u2514\u2500\u2500 Development tools      +     runtime componentsJRE \u2514\u2500\u2500 JVM      +     runtime librariesJVM \u2514\u2500\u2500 Loads + verifies + executes bytecode\n```\n### **Modern Java note**\nThe JRE is still useful as a conceptual term,\u00a0but modern Oracle/OpenJDK distributions generally do not provide a separate JRE package in the old Java 8 style.\n---\n## **27.17 60\u201390 Second Interview Answer**\nIf an interviewer asks:\n> \"Explain JVM architecture.\"\nA simple answer is:\n> JVM is the runtime environment that executes Java bytecode.\u00a0When we compile a Java program using\u00a0`javac`,\u00a0the\u00a0`.java`\u00a0file is converted into a\u00a0`.class`\u00a0bytecode file.\u00a0The Class Loader loads this class into the JVM.\u00a0The loaded class goes through linking,\u00a0which includes verification,\u00a0preparation and resolution when required,\u00a0followed by initialization.\n\tJVM runtime memory is divided into areas such as Heap,\u00a0Stack,\u00a0PC Register,\u00a0Native Method Stack and the class-related Method Area concept.\u00a0Objects are generally created on the Heap,\u00a0while each thread has its own Stack containing method frames.\u00a0The PC Register keeps track of the current JVM instruction position for a thread.\n\tThe Execution Engine executes bytecode using the interpreter and can use JIT compilation to compile frequently executed code into optimized native machine code.\u00a0Garbage Collection automatically reclaims objects that are no longer reachable.\n\tIn short:\n\t```plain text\n.java  \u2193javac  \u2193.class bytecode  \u2193Class Loader  \u2193Linking + Initialization  \u2193Runtime Memory  \u2193Execution Engine  \u2193Program execution\n\t```\n---\n## **27.18 30-Second Fast Revision**\n```plain text\nJDK\u2192 Development kitJRE\u2192 Runtime environment (mainly a conceptual/historical distinction today)JVM\u2192 Executes bytecodeClass Loader\u2192 Loads classesLinking\u2192 Verify + Prepare + Resolve when requiredInitialization\u2192 Run class initializationHeap\u2192 Objects and arraysStack\u2192 Per-thread method framesPC Register\u2192 Per-thread JVM instruction positionNative Method Stack\u2192 Supports native method executionInterpreter\u2192 Executes bytecodeJIT\u2192 Compiles hot code to native codeGC\u2192 Reclaims unreachable objectsMetaspace\u2192 HotSpot class metadata storage\n```\n---\n## **27.19 One-Line Memory Tricks**\n```plain text\nJDK \u2192 BuildJRE \u2192 RunJVM \u2192 ExecuteClass Loader \u2192 LoadLinking \u2192 PrepareInitialization \u2192 Start classHeap \u2192 ObjectsStack \u2192 Method callsPC \u2192 Current instructionMetaspace \u2192 Class metadataInterpreter \u2192 Start quicklyJIT \u2192 Make hot code fasterGC \u2192 Reclaim unreachable objects\n```\n---\n# **28. Important Corrections to Remember**\nThe second set of notes contains several useful explanations,\u00a0but some statements should be treated carefully.\n### **Static variables and Metaspace**\nAvoid memorizing:\n```plain text\nstatic variables are always stored in Metaspace\n```\nas a universal JVM rule.\nUse:\n> Static fields are class-level data,\u00a0while exact storage details are JVM implementation dependent.\u00a0In HotSpot,\u00a0class metadata is stored in Metaspace,\u00a0while objects and the String Pool are associated with the Heap.\n### **String Pool**\nModern HotSpot JVMs keep the String Pool on the Heap,\u00a0not PermGen as in older Java versions.\n### **JIT threshold**\nAvoid fixed claims such as:\n```plain text\n1000 calls \u2192 JIT\n```\nJIT compilation is based on runtime profiling and JVM-specific heuristics/configuration.\n### **Garbage Collection generations**\nEden\u00a0\u2192\u00a0Survivor\u00a0\u2192\u00a0Old is a useful traditional model,\u00a0but the exact behavior depends on the collector.\n### **Native Method Stack**\nThe exact implementation of native method stacks and native calls is JVM/platform dependent.\n### **Method Area**\nRemember:\n```plain text\nMethod Area\u2192 JVM specification conceptMetaspace\u2192 HotSpot implementation for class metadata\n```";
+
+    // Render JVM Markdown
+    document.getElementById('jvm-content').innerHTML = marked.parse(jvmMarkdown);
+
+    // Tab switcher
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      if (tabId === 'study-plan') {
+        document.getElementById('study-plan-tab').classList.add('active');
+        document.querySelectorAll('.nav-item')[0].classList.add('active');
+      } else if (tabId === 'jvm-notes') {
+        document.getElementById('jvm-notes-tab').classList.add('active');
+        document.querySelectorAll('.nav-item')[1].classList.add('active');
+      }
+    }
+
+    // Task & Week Data Structure
+    const weeksData = [{"id": "w1", "number": 1, "title": "Arrays, Two Pointers & Memory Models", "shortTitle": "Arrays & Memory", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "Master Kadane's, Intervals, Matrix manipulation, JVM Architecture & React Lifecycle.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w1-d1-p1", "name": "2 Sum Problem", "time": "20 mins", "link": "https://leetcode.com/problems/two-sum/", "yt": "https://www.youtube.com/watch?v=UXDSeD9mN-k", "lc": "https://leetcode.com/problems/two-sum/", "tuf": "https://takeuforward.org/data-structure/two-sum-check-if-a-pair-with-given-sum-exists-in-array/"}, {"id": "task-w1-d1-p2", "name": "Kadane's Algorithm | Maximum Subarray Sum", "time": "25 mins", "link": "https://leetcode.com/problems/maximum-subarray/", "yt": "https://www.youtube.com/watch?v=AHZpyENo7k4", "lc": "https://leetcode.com/problems/maximum-subarray/", "tuf": "https://takeuforward.org/data-structure/kadanes-algorithm-maximum-subarray-sum-in-an-array/"}, {"id": "task-w1-d1-p3", "name": "Review Kadane's optimal vs brute force notes", "time": "15 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w1-d2-p1", "name": "3 Sum | Brute - Better - Optimal with Codes", "time": "35 mins", "link": "https://leetcode.com/problems/3sum/", "yt": "https://www.youtube.com/watch?v=DhFh8Kw7ymk", "lc": "https://leetcode.com/problems/3sum/", "tuf": "https://takeuforward.org/data-structure/3-sum-find-triplets-that-add-up-to-a-zero/"}, {"id": "task-w1-d2-p2", "name": "Sort an array of 0's 1's & 2's (Dutch National Flag)", "time": "20 mins", "link": "https://leetcode.com/problems/sort-colors/", "yt": "https://www.youtube.com/watch?v=tp8JIuCXBaU", "lc": "https://leetcode.com/problems/sort-colors/", "tuf": "https://takeuforward.org/data-structure/sort-an-array-of-0s-1s-and-2s/"}, {"id": "task-w1-d2-p3", "name": "\u2615 Java Core: JVM Architecture, Heap vs Stack Memory", "time": "40 mins", "notesLink": "Week-01_Arrays_TwoPointers_Memory/JVM_Architecture/index.html"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w1-d3-p1", "name": "Merge Overlapping Intervals", "time": "30 mins", "link": "https://leetcode.com/problems/merge-intervals/", "yt": "https://www.youtube.com/watch?v=IexN60k62jo", "lc": "https://leetcode.com/problems/merge-intervals/", "tuf": "https://takeuforward.org/data-structure/merge-overlapping-sub-intervals/"}, {"id": "task-w1-d3-p2", "name": "\u2615 Java Core: String Constant Pool & Immutability in depth", "time": "30 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w1-d4-p1", "name": "Set Matrix Zeroes | O(1) Space Approach", "time": "30 mins", "link": "https://leetcode.com/problems/set-matrix-zeroes/", "yt": "https://www.youtube.com/watch?v=N0MgLvceX7M", "lc": "https://leetcode.com/problems/set-matrix-zeroes/", "tuf": "https://takeuforward.org/data-structure/set-matrix-zero/"}, {"id": "task-w1-d4-p2", "name": "\u269b\ufe0f React Core: Virtual DOM vs Real DOM & Reconciliation", "time": "30 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w1-d5-p1", "name": "\u269b\ufe0f React Core: Component Lifecycle, useState & useEffect cleanups", "time": "60 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w1-d6-p1", "name": "\ud83d\udd01 Edge cases recap on Arrays & Interval problems", "time": "60 mins"}, {"id": "task-w1-d6-p2", "name": "\ud83d\udcbb Hands-on: Trace Java memory allocations & write sample code", "time": "90 mins"}, {"id": "task-w1-d6-p3", "name": "\u269b\ufe0f React demo: Hook lifecycle & state batching exercise", "time": "60 mins"}, {"id": "task-w1-d6-p4", "name": "\ud83d\udcdd Week 1 problem revision & quick self-assessment", "time": "60 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w1-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w2", "number": 2, "title": "Bit Manipulation & Introduction to Linked Lists", "shortTitle": "Bits & Linked Lists", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "Bitwise patterns, Singly Linked List traversals, Java OOPs & React Custom Hooks.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w2-d1-p1", "name": "L3. Minimum Bit Flips to Convert Number", "time": "20 mins", "link": "https://leetcode.com/problems/minimum-bit-flips-to-convert-number/", "yt": "https://www.youtube.com/watch?v=OOdrmcfZXd8", "lc": "https://leetcode.com/problems/minimum-bit-flips-to-convert-number/", "tuf": "https://takeuforward.org/bit-manipulation/minimum-bit-flips-to-convert-number/"}, {"id": "task-w2-d1-p2", "name": "\ud83d\udd22 Core bitwise operators recap (AND, OR, XOR, Left/Right shifts)", "time": "40 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w2-d2-p1", "name": "L5. Single Number-I", "time": "15 mins", "link": "https://leetcode.com/problems/single-number/", "yt": "https://www.youtube.com/watch?v=sFBCAl8yBfE", "lc": "https://leetcode.com/problems/single-number/", "tuf": "https://takeuforward.org/arrays/find-the-number-that-appears-once-and-the-other-numbers-twice/"}, {"id": "task-w2-d2-p2", "name": "L6. Single Number II", "time": "25 mins", "link": "https://leetcode.com/problems/single-number-ii/", "yt": "https://www.youtube.com/watch?v=5Bb2nqA40JY", "lc": "https://leetcode.com/problems/single-number-ii/", "tuf": "https://takeuforward.org/bit-manipulation/single-number-ii/"}, {"id": "task-w2-d2-p3", "name": "\ud83d\udd22 Bitwise state counters pattern review", "time": "20 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w2-d3-p1", "name": "L9. Reverse a LinkedList | Iterative and Recursive", "time": "20 mins", "link": "https://leetcode.com/problems/reverse-linked-list/", "yt": "https://www.youtube.com/watch?v=D2vI2DNJGd8", "lc": "https://leetcode.com/problems/reverse-linked-list/", "tuf": "https://takeuforward.org/data-structure/reverse-a-linked-list/"}, {"id": "task-w2-d3-p2", "name": "\u2615 Java Core: OOPs pillars (Encapsulation, Polymorphism, Inheritance)", "time": "40 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w2-d4-p1", "name": "L13. Find the middle element of the LinkedList", "time": "15 mins", "link": "https://leetcode.com/problems/middle-of-the-linked-list/", "yt": "https://www.youtube.com/watch?v=7LjQ57RqgEc", "lc": "https://leetcode.com/problems/middle-of-the-linked-list/", "tuf": "https://takeuforward.org/data-structure/find-middle-element-in-a-linked-list/"}, {"id": "task-w2-d4-p2", "name": "\u2615 Java Core: Interfaces vs Abstract Classes (Java 8/9 default & private methods)", "time": "45 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w2-d5-p1", "name": "L15. Find the length of the Loop in LinkedList", "time": "25 mins", "link": "https://leetcode.com/problems/linked-list-cycle-ii/", "yt": "https://www.youtube.com/watch?v=I4g1qbegwFI", "lc": "https://leetcode.com/problems/linked-list-cycle-ii/", "tuf": "https://takeuforward.org/data-structure/find-length-of-loop-in-linked-list/"}, {"id": "task-w2-d5-p2", "name": "\u269b\ufe0f React Core: Custom Hooks creation & rules", "time": "35 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w2-d6-p1", "name": "\ud83c\udfaf Fast & Slow Pointers masterclass (cycle detection & midpoints)", "time": "60 mins"}, {"id": "task-w2-d6-p2", "name": "\u2615 Java 8 Streams API & Lambdas hands-on (filter, map, reduce, collect)", "time": "90 mins"}, {"id": "task-w2-d6-p3", "name": "\u269b\ufe0f React Core: useRef & Lifting State Up design patterns", "time": "60 mins"}, {"id": "task-w2-d6-p4", "name": "\ud83d\udd0d Pointer manipulation edge cases review (empty lists, single node)", "time": "60 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w2-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w3", "number": 3, "title": "Advanced Linked Lists & Collection Internals", "shortTitle": "Adv. LL & Collections", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "K-group reversal, Merge K lists, HashMap internal architecture & Context API.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w3-d1-p1", "name": "L5. Add 2 numbers in LinkedList | Dummy Node Approach", "time": "30 mins", "link": "https://leetcode.com/problems/add-two-numbers/", "yt": "https://www.youtube.com/watch?v=XmRrGzR6UdE", "lc": "https://leetcode.com/problems/add-two-numbers/", "tuf": "https://takeuforward.org/data-structure/add-two-numbers-represented-as-linked-lists/"}, {"id": "task-w3-d1-p2", "name": "\ud83d\udcdd Dummy node pattern & carry propagation review", "time": "30 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w3-d2-p1", "name": "L25. Merge K Sorted Lists | Multiple Approaches", "time": "40 mins", "link": "https://leetcode.com/problems/merge-k-sorted-lists/", "yt": "https://www.youtube.com/watch?v=1z5JfljSIok", "lc": "https://leetcode.com/problems/merge-k-sorted-lists/", "tuf": "https://takeuforward.org/data-structure/merge-k-sorted-lists/"}, {"id": "task-w3-d2-p2", "name": "\ud83d\udcca Min-Heap vs Divide & Conquer complexity comparison", "time": "20 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w3-d3-p1", "name": "L21. Reverse Nodes in K Group Size of LinkedList", "time": "40 mins", "link": "https://leetcode.com/problems/reverse-nodes-in-k-group/", "yt": "https://www.youtube.com/watch?v=lIar1skcQYI", "lc": "https://leetcode.com/problems/reverse-nodes-in-k-group/", "tuf": "https://takeuforward.org/data-structure/reverse-linked-list-in-groups-of-size-k/"}, {"id": "task-w3-d3-p2", "name": "\ud83d\udcdd Pointer tracing & edge case analysis", "time": "20 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w3-d4-p1", "name": "\u2615 Java Collections: ArrayList vs LinkedList & Fail-fast vs Fail-safe iterators", "time": "60 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w3-d5-p1", "name": "\u269b\ufe0f React Architecture: Prop drilling vs Context API setup", "time": "60 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w3-d6-p1", "name": "\ud83d\udd01 Linked List hard questions review without looking at solutions", "time": "90 mins"}, {"id": "task-w3-d6-p2", "name": "\u2615 Java Collections: HashMap internals (hashing, bucket indexing, collision, treeification)", "time": "90 mins"}, {"id": "task-w3-d6-p3", "name": "\u269b\ufe0f Hands-on: Build a mini React state management flow with Context API", "time": "90 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w3-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w4", "number": 4, "title": "Recursion, Backtracking & Performance", "shortTitle": "Recursion & Backtracking", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "Backtracking templates, N-Queens, ConcurrentHashMap & React performance.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w4-d1-p1", "name": "L8. Combination Sum | Recursion", "time": "30 mins", "link": "https://leetcode.com/problems/combination-sum/", "yt": "https://www.youtube.com/watch?v=OyZFFqQtu98", "lc": "https://leetcode.com/problems/combination-sum/", "tuf": "https://takeuforward.org/data-structure/combination-sum-1/"}, {"id": "task-w4-d1-p2", "name": "\ud83c\udf33 Recursion tree diagramming & pick/non-pick pattern", "time": "30 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w4-d2-p1", "name": "L11. Subset Sum II | Recursion", "time": "30 mins", "link": "https://leetcode.com/problems/subsets-ii/", "yt": "https://www.youtube.com/watch?v=RIn3gOkbhQE", "lc": "https://leetcode.com/problems/subsets-ii/", "tuf": "https://takeuforward.org/data-structure/subset-ii-print-all-the-unique-subsets/"}, {"id": "task-w4-d2-p2", "name": "\ud83d\udcdd Duplicate handling strategy & recursion pruning", "time": "30 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w4-d3-p1", "name": "L17. Palindrome Partitioning | Recursion", "time": "35 mins", "link": "https://leetcode.com/problems/palindrome-partitioning/", "yt": "https://www.youtube.com/watch?v=WBgsABoClE0", "lc": "https://leetcode.com/problems/palindrome-partitioning/", "tuf": "https://takeuforward.org/data-structure/palindrome-partitioning/"}, {"id": "task-w4-d3-p2", "name": "\ud83d\udcdd Backtracking template consolidation", "time": "25 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w4-d4-p1", "name": "\u2615 Java Collections: ConcurrentHashMap internals vs Collections.synchronizedMap", "time": "60 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w4-d5-p1", "name": "\u269b\ufe0f React Performance: React.memo, useMemo, and useCallback when & when NOT to use", "time": "60 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w4-d6-p1", "name": "L14. N-Queens | Backtracking", "time": "45 mins", "link": "https://leetcode.com/problems/n-queens/", "yt": "https://www.youtube.com/watch?v=i05Ju7AftcM", "lc": "https://leetcode.com/problems/n-queens/", "tuf": "https://takeuforward.org/data-structure/n-queen-problem-return-all-distinct-solutions-to-the-n-queens-puzzle/"}, {"id": "task-w4-d6-p2", "name": "\u265f\ufe0f Chessboard safety checks optimization (hashing rows, cols, diagonals)", "time": "45 mins"}, {"id": "task-w4-d6-p3", "name": "\u269b\ufe0f React Performance Profiling: Identifying re-renders & React.lazy code splitting", "time": "90 mins"}, {"id": "task-w4-d6-p4", "name": "\u2615 Java Collections recap & interview quiz review", "time": "90 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w4-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w5", "number": 5, "title": "Stacks, Queues, Monotonic & Cache", "shortTitle": "Stacks & Cache Design", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "Monotonic stack, LFU Cache, Trapping Rainwater & Java Multithreading.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w5-d1-p1", "name": "L6. Next Greater Element - II", "time": "25 mins", "link": "https://leetcode.com/problems/next-greater-element-ii/", "yt": "https://www.youtube.com/watch?v=7PrncD7v9YQ", "lc": "https://leetcode.com/problems/next-greater-element-ii/", "tuf": "https://takeuforward.org/data-structure/next-greater-element-using-stack/"}, {"id": "task-w5-d1-p2", "name": "\ud83d\udd04 Circular array index mapping (i % n) logic", "time": "35 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w5-d2-p1", "name": "L11. Valid Parenthesis String", "time": "25 mins", "link": "https://leetcode.com/problems/valid-parenthesis-string/", "yt": "https://www.youtube.com/watch?v=cHT6sG_hUZI", "lc": "https://leetcode.com/problems/valid-parenthesis-string/", "tuf": "https://takeuforward.org/data-structure/valid-parenthesis-string/"}, {"id": "task-w5-d2-p2", "name": "\u2696\ufe0f Range greedy vs two-stack approach comparison", "time": "35 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w5-d3-p1", "name": "L16. Sliding Window Maximum", "time": "35 mins", "link": "https://leetcode.com/problems/sliding-window-maximum/", "yt": "https://www.youtube.com/watch?v=CZQGRp93K4k", "lc": "https://leetcode.com/problems/sliding-window-maximum/", "tuf": "https://takeuforward.org/data-structure/sliding-window-maximum/"}, {"id": "task-w5-d3-p2", "name": "\ud83e\ude9f Deque monotonic window mechanism analysis", "time": "25 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w5-d4-p1", "name": "L8. Trapping Rainwater | 2 Approaches", "time": "35 mins", "link": "https://leetcode.com/problems/trapping-rain-water/", "yt": "https://www.youtube.com/watch?v=m18Hntz4go8", "lc": "https://leetcode.com/problems/trapping-rain-water/", "tuf": "https://takeuforward.org/data-structure/trapping-rainwater/"}, {"id": "task-w5-d4-p2", "name": "\ud83d\udca7 Two-pointer optimal approach vs prefix max array", "time": "25 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w5-d5-p1", "name": "\u2615 Java Concurrency: Thread states, thread lifecycle & synchronized blocks", "time": "60 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w5-d6-p1", "name": "Implement LFU cache in C++/Java | Leetcode(Hard)", "time": "50 mins", "link": "https://leetcode.com/problems/lfu-cache/", "yt": "https://www.youtube.com/watch?v=0PSB9y8ehbk", "lc": "https://leetcode.com/problems/lfu-cache/", "tuf": "https://takeuforward.org/data-structure/lfu-cache/"}, {"id": "task-w5-d6-p2", "name": "\ud83d\uddc4\ufe0f Doubly Linked List + HashMaps integration walkthrough", "time": "70 mins"}, {"id": "task-w5-d6-p3", "name": "\u2615 Java Concurrency: volatile, Atomic variables, and memory visibility", "time": "70 mins"}, {"id": "task-w5-d6-p4", "name": "\u2615 Java Concurrency: ExecutorService, Thread Pools, and Callable/Future", "time": "80 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w5-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w6", "number": 6, "title": "Greedy Algorithms & Modern Frontend State", "shortTitle": "Greedy & Redux/Zustand", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "Greedy proofs, Job sequencing, Redux Toolkit vs Zustand & Producer-Consumer.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w6-d1-p1", "name": "L7. N Meeting in One Room", "time": "20 mins", "yt": "https://www.youtube.com/watch?v=II6ziNnub1Q", "lc": "https://practice.geeksforgeeks.org/problems/n-meetings-in-one-room-1587115620/1", "tuf": "https://takeuforward.org/data-structure/n-meetings-in-one-room/"}, {"id": "task-w6-d1-p2", "name": "\ud83e\udd1d Greedy activity selection proof & interval sorting", "time": "40 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w6-d2-p1", "name": "L6. Job Sequencing Problem", "time": "25 mins", "yt": "https://www.youtube.com/watch?v=LjPx4wQaRIs", "lc": "https://practice.geeksforgeeks.org/problems/job-sequencing-problem-1587115620/1", "tuf": "https://takeuforward.org/data-structure/job-sequencing-problem/"}, {"id": "task-w6-d2-p2", "name": "\ud83d\udcc5 Slot allocation strategy & DSU optimization notes", "time": "35 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w6-d3-p1", "name": "L13. Fractional Knapsack Algorithm", "time": "20 mins", "yt": "https://www.youtube.com/watch?v=F_DDzYnxO14", "lc": "https://practice.geeksforgeeks.org/problems/fractional-knapsack-1587115620/1", "tuf": "https://takeuforward.org/data-structure/fractional-knapsack-problem-greedy-approach/"}, {"id": "task-w6-d3-p2", "name": "\ud83c\udf92 Value-per-unit-weight greedy sorting", "time": "40 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w6-d4-p1", "name": "\u269b\ufe0f React State: Redux Toolkit core architecture (Slices, Reducers, Actions)", "time": "60 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w6-d5-p1", "name": "\u269b\ufe0f React State: Zustand vs Redux Toolkit & handling asynchronous query state", "time": "60 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w6-d6-p1", "name": "\ud83d\udca1 Greedy paradigm recap: When greedy works vs when DP is required", "time": "60 mins"}, {"id": "task-w6-d6-p2", "name": "\u2615 Java Concurrency: Producer-Consumer pattern using BlockingQueue", "time": "90 mins"}, {"id": "task-w6-d6-p3", "name": "\u269b\ufe0f Practical: Wire up a React store with asynchronous API fetching", "time": "120 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w6-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w7", "number": 7, "title": "Graph Fundamentals & Disjoint Set Union (DSU)", "shortTitle": "Graphs & DSU", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "Graph representations, BFS/DFS cycles, DSU union by rank & Spring Boot IoC.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w7-d1-p1", "name": "G-6. Depth-First Search (DFS)", "time": "35 mins", "yt": "https://www.youtube.com/watch?v=Qzf1a--rhp8", "lc": "https://practice.geeksforgeeks.org/problems/depth-first-traversal-for-a-graph/1", "tuf": "https://takeuforward.org/data-structure/depth-first-search-dfs/"}, {"id": "task-w7-d1-p2", "name": "\ud83d\udd78\ufe0f Graph representation (Adjacency List/Matrix) & DFS recursion tree", "time": "25 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w7-d2-p1", "name": "G-11. Detect a Cycle in BFS (Undirected graph)", "time": "35 mins", "yt": "https://www.youtube.com/watch?v=BPlrALf1LDU", "lc": "https://practice.geeksforgeeks.org/problems/detect-cycle-in-an-undirected-graph/1", "tuf": "https://takeuforward.org/data-structure/detect-cycle-in-an-undirected-graph-using-bfs/"}, {"id": "task-w7-d2-p2", "name": "\ud83d\udd04 Queue state tracking & parent node tracking in BFS", "time": "25 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w7-d3-p1", "name": "G-13. Distance of nearest cell having 1 | 0/1 Matrix", "time": "30 mins", "link": "https://leetcode.com/problems/01-matrix/", "yt": "https://www.youtube.com/watch?v=edXdVZ8L_Fk", "lc": "https://leetcode.com/problems/01-matrix/", "tuf": "https://takeuforward.org/graph/distance-of-nearest-cell-having-1-g-13/"}, {"id": "task-w7-d3-p2", "name": "\ud83c\udf0a Multi-source BFS pattern review", "time": "30 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w7-d4-p1", "name": "G-19. Detect cycle in a directed graph using DFS", "time": "30 mins", "yt": "https://www.youtube.com/watch?v=9twcmtQj4DU", "lc": "https://practice.geeksforgeeks.org/problems/detect-cycle-in-a-directed-graph/1", "tuf": "https://takeuforward.org/data-structure/detect-cycle-in-a-directed-graph-using-dfs-g-19/"}, {"id": "task-w7-d4-p2", "name": "\ud83d\udea9 Path visited vs visited array distinction", "time": "30 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w7-d5-p1", "name": "\ud83c\udf10 Backend Dev: REST API principles, HTTP verbs, status codes & idempotency", "time": "60 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w7-d6-p1", "name": "\ud83c\udf32 Disjoint Set Union (DSU) deep dive: Union by Rank, Path Compression", "time": "90 mins"}, {"id": "task-w7-d6-p2", "name": "G-51. Number of Islands - II - Online Queries - DSU", "time": "40 mins", "yt": "https://www.youtube.com/watch?v=Rn6B-Q4SNgc", "lc": "https://leetcode.com/problems/number-of-islands-ii/", "tuf": "https://takeuforward.org/graph/number-of-islands-ii-online-queries-dsu-g-51/"}, {"id": "task-w7-d6-p3", "name": "\ud83d\uddfa\ufe0f Dynamic components & 2D-to-1D index flattening practice", "time": "50 mins"}, {"id": "task-w7-d6-p4", "name": "\ud83c\udf43 Spring Boot Core: IoC Container, Dependency Injection & Core Annotations", "time": "90 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w7-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w8", "number": 8, "title": "Topological Sorting & Database Foundations", "shortTitle": "Topo Sort & Databases", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "Kahn's algorithm, Course schedule, Alien dictionary, SQL Joins & B-Tree Indexing.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w8-d1-p1", "name": "G-21. Topological Sort Algorithm | DFS", "time": "25 mins", "yt": "https://www.youtube.com/watch?v=5lZ0iJMrUMk", "lc": "https://practice.geeksforgeeks.org/problems/topological-sort/1", "tuf": "https://takeuforward.org/data-structure/topological-sort-algorithm-dfs-g-21/"}, {"id": "task-w8-d1-p2", "name": "\ud83d\udcd0 DAG properties & Kahn's Algorithm (BFS) intro", "time": "35 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w8-d2-p1", "name": "G-24. Course Schedule I and II | Topological Sort", "time": "35 mins", "link": "https://leetcode.com/problems/course-schedule/", "yt": "https://www.youtube.com/watch?v=WAOfKQKb-Cg", "lc": "https://leetcode.com/problems/course-schedule/", "tuf": "https://takeuforward.org/data-structure/course-schedule-i-and-ii-pre-requisite-tasks-topological-sort-g-24/"}, {"id": "task-w8-d2-p2", "name": "\ud83c\udf93 Cycle detection in DAG using Kahn's algorithm", "time": "25 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w8-d3-p1", "name": "G-26. Alien Dictionary - Topological Sort", "time": "40 mins", "link": "https://leetcode.com/problems/alien-dictionary/", "yt": "https://www.youtube.com/watch?v=U3N_je7tWAs", "lc": "https://leetcode.com/problems/alien-dictionary/", "tuf": "https://takeuforward.org/data-structure/alien-dictionary-topological-sort-g-26/"}, {"id": "task-w8-d3-p2", "name": "\ud83d\udc7d Dictionary string mismatch edge cases & graph formulation", "time": "20 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w8-d4-p1", "name": "\ud83c\udf43 Spring Boot Architecture: Controller, Service, Repository layers", "time": "60 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w8-d5-p1", "name": "\ud83d\uddc4\ufe0f Database Foundations: Relational (RDBMS) vs NoSQL (Document, Key-Value)", "time": "60 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w8-d6-p1", "name": "\ud83d\udd04 Topological sorting templates revision & cycle problem patterns", "time": "60 mins"}, {"id": "task-w8-d6-p2", "name": "\ud83d\uddc4\ufe0f SQL Joins masterclass: Inner, Left, Right, Full Outer, Self & Cross", "time": "90 mins"}, {"id": "task-w8-d6-p3", "name": "\u26a1 Database Indexing internals: B-Tree structure, Clustered vs Non-clustered", "time": "120 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w8-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w9", "number": 9, "title": "Graph Shortest Paths & Advanced DSU", "shortTitle": "Shortest Paths & MST", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "Dijkstra, Bellman-Ford, Floyd-Warshall, Kruskal's MST & ACID Transactions.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w9-d1-p1", "name": "G-34. Dijkstra's Algorithm (PriorityQueue implementation)", "time": "30 mins", "yt": "https://www.youtube.com/watch?v=V6H1qAeB-l4", "lc": "https://practice.geeksforgeeks.org/problems/implementing-dijkstra-set-1-adjoining-matrix/1", "tuf": "https://takeuforward.org/data-structure/dijkstras-algorithm-using-priority-queue-g-32/"}, {"id": "task-w9-d1-p2", "name": "\u26a0\ufe0f Why Dijkstra fails on negative weights", "time": "30 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w9-d2-p1", "name": "G-36. Shortest Distance in a Binary Maze", "time": "30 mins", "link": "https://leetcode.com/problems/shortest-path-in-binary-matrix/", "yt": "https://www.youtube.com/watch?v=U5Mw4eyUmw4", "lc": "https://leetcode.com/problems/shortest-path-in-binary-matrix/", "tuf": "https://takeuforward.org/data-structure/g-36-shortest-distance-in-a-binary-maze/"}, {"id": "task-w9-d2-p2", "name": "\ud83c\udfc1 Unweighted/unit-weight 2D grid BFS optimization", "time": "30 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w9-d3-p1", "name": "G-37. Path With Minimum Effort", "time": "35 mins", "link": "https://leetcode.com/problems/path-with-minimum-effort/", "yt": "https://www.youtube.com/watch?v=0ytpZdxHYhA", "lc": "https://leetcode.com/problems/path-with-minimum-effort/", "tuf": "https://takeuforward.org/data-structure/g-37-path-with-minimum-effort/"}, {"id": "task-w9-d3-p2", "name": "\ud83c\udfd4\ufe0f Min-heap priority traversal on matrix", "time": "25 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w9-d4-p1", "name": "G-41. Bellman Ford Algorithm (Negative cycle detection)", "time": "30 mins", "yt": "https://www.youtube.com/watch?v=0vVofAhAYjc", "lc": "https://practice.geeksforgeeks.org/problems/distance-from-the-source-bellman-ford-algorithm/1", "tuf": "https://takeuforward.org/data-structure/bellman-ford-algorithm-g-41/"}, {"id": "task-w9-d4-p2", "name": "\ud83d\udd04 Relaxation count (V - 1 times) mathematical justification", "time": "30 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w9-d5-p1", "name": "G-42. Floyd Warshall Algorithm (All-pairs shortest path)", "time": "30 mins", "yt": "https://www.youtube.com/watch?v=YbY8npwZZj8", "lc": "https://practice.geeksforgeeks.org/problems/implementing-floyd-warshall2042/1", "tuf": "https://takeuforward.org/data-structure/floyd-warshall-algorithm-g-42/"}, {"id": "task-w9-d5-p2", "name": "\ud83c\udf10 Adjacency matrix multi-source DP updates", "time": "30 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w9-d6-p1", "name": "G-47. Kruskal's Algorithm - Minimum Spanning Tree", "time": "35 mins", "yt": "https://www.youtube.com/watch?v=DMnSC_b160k", "lc": "https://practice.geeksforgeeks.org/problems/minimum-spanning-tree/1", "tuf": "https://takeuforward.org/data-structure/kruskals-algorithm-minimum-spanning-tree-g-47/"}, {"id": "task-w9-d6-p2", "name": "G-49. Number of Operations to Make Network Connected - DSU", "time": "30 mins", "link": "https://leetcode.com/problems/number-of-operations-to-make-network-connected/", "yt": "https://www.youtube.com/watch?v=FYrl7Iz9_ZU", "lc": "https://leetcode.com/problems/number-of-operations-to-make-network-connected/", "tuf": "https://takeuforward.org/data-structure/number-of-operations-to-make-network-connected-dsu-g-49/"}, {"id": "task-w9-d6-p3", "name": "G-50. Accounts Merge - DSU", "time": "40 mins", "link": "https://leetcode.com/problems/accounts-merge/", "yt": "https://www.youtube.com/watch?v=FMwpt_aQOGw", "lc": "https://leetcode.com/problems/accounts-merge/", "tuf": "https://takeuforward.org/data-structure/accounts-merge-disjoint-set-g-50/"}, {"id": "task-w9-d6-p4", "name": "\ud83d\uddc4\ufe0f Database Transactions: ACID properties & Isolation levels", "time": "105 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w9-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w10", "number": 10, "title": "Dynamic Programming Core (Grids & Knapsack)", "shortTitle": "DP Grids & Knapsack", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "Memoization vs Tabulation, Grid DP, 0/1 Knapsack & Normalization.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w10-d1-p1", "name": "DP 3. Frog Jump & DP 6. House Robber 2", "time": "25 mins", "link": "https://leetcode.com/problems/house-robber-ii/", "yt": "https://www.youtube.com/watch?v=EgG3jsGoPvQ", "lc": "https://leetcode.com/problems/house-robber-ii/", "tuf": "https://takeuforward.org/data-structure/dynamic-programming-frog-jump-dp-3/"}, {"id": "task-w10-d1-p2", "name": "\ud83e\udde0 DP Intuition: Memoization vs Tabulation space-time tradeoffs", "time": "35 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w10-d2-p1", "name": "DP 8. Grid Unique Paths & DP 9. Unique Paths 2", "time": "35 mins", "link": "https://leetcode.com/problems/unique-paths-ii/", "yt": "https://www.youtube.com/watch?v=sdE0A2Oxofw", "lc": "https://leetcode.com/problems/unique-paths-ii/", "tuf": "https://takeuforward.org/data-structure/grid-unique-paths-dp-on-grids-dp8/"}, {"id": "task-w10-d2-p2", "name": "\ud83d\udcd0 Grid DP space optimization to 1 row", "time": "25 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w10-d3-p1", "name": "DP 10. Minimum Path Sum in Grid", "time": "25 mins", "link": "https://leetcode.com/problems/minimum-path-sum/", "yt": "https://www.youtube.com/watch?v=_rgTlyky1uQ", "lc": "https://leetcode.com/problems/minimum-path-sum/", "tuf": "https://takeuforward.org/data-structure/minimum-path-sum-in-a-grid-dp-10/"}, {"id": "task-w10-d3-p2", "name": "\ud83d\uddfa\ufe0f 2D Grid DP template review & boundary handling", "time": "35 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w10-d4-p1", "name": "DP 14. Subset Sum Equals to Target", "time": "30 mins", "yt": "https://www.youtube.com/watch?v=fWX9xDmIzRI", "lc": "https://practice.geeksforgeeks.org/problems/subset-sum-problem-1611555638/1", "tuf": "https://takeuforward.org/data-structure/subset-sum-equal-to-target-dp-14/"}, {"id": "task-w10-d4-p2", "name": "DP 15. Partition Equal Subset Sum", "time": "30 mins", "link": "https://leetcode.com/problems/partition-equal-subset-sum/", "yt": "https://www.youtube.com/watch?v=7win3BitvII", "lc": "https://leetcode.com/problems/partition-equal-subset-sum/", "tuf": "https://takeuforward.org/data-structure/partition-equal-subset-sum-dp-15/"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w10-d5-p1", "name": "\ud83d\uddc4\ufe0f Database Normalization: 1NF, 2NF, 3NF, BCNF with schema examples", "time": "60 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w10-d6-p1", "name": "DP 19. 0/1 Knapsack (Recursive to Tabulation to 1D Array)", "time": "50 mins", "yt": "https://www.youtube.com/watch?v=GqOmJHQvNfbY", "lc": "https://practice.geeksforgeeks.org/problems/0-1-knapsack-problem0945/1", "tuf": "https://takeuforward.org/data-structure/0-1-knapsack-dp-19/"}, {"id": "task-w10-d6-p2", "name": "DP 20. Minimum Coins & DP 22. Coin Change 2 (Unbounded)", "time": "50 mins", "link": "https://leetcode.com/problems/coin-change/", "yt": "https://www.youtube.com/watch?v=HgyouEiC5qc", "lc": "https://leetcode.com/problems/coin-change-ii/", "tuf": "https://takeuforward.org/data-structure/coin-change-2-dp-22/"}, {"id": "task-w10-d6-p3", "name": "\ud83c\udf92 Knapsack decision tree variations & pattern consolidation", "time": "70 mins"}, {"id": "task-w10-d6-p4", "name": "\ud83d\uddc4\ufe0f SQL schema design & indexing practice problems", "time": "100 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w10-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w11", "number": 11, "title": "DP (Strings, Stocks, LIS) & Trie", "shortTitle": "Strings, Stocks & Trie", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "LCS, Edit Distance, Stock Cooldown, LIS binary search, Trie & OS/Networks.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w11-d1-p1", "name": "DP 26. Print Longest Common Subsequence", "time": "30 mins", "link": "https://leetcode.com/problems/longest-common-subsequence/", "yt": "https://www.youtube.com/watch?v=-zI4lmF63m4", "lc": "https://leetcode.com/problems/longest-common-subsequence/", "tuf": "https://takeuforward.org/data-structure/print-longest-common-subsequence-dp-26/"}, {"id": "task-w11-d1-p2", "name": "\ud83e\uddf5 Table backtracking to construct answer string", "time": "30 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w11-d2-p1", "name": "DP 31. Shortest Common Supersequence", "time": "35 mins", "link": "https://leetcode.com/problems/shortest-common-supersequence/", "yt": "https://www.youtube.com/watch?v=xElxAuBGYsI", "lc": "https://leetcode.com/problems/shortest-common-supersequence/", "tuf": "https://takeuforward.org/data-structure/shortest-common-supersequence-dp-31/"}, {"id": "task-w11-d2-p2", "name": "\ud83d\udd24 Merging LCS with non-matching characters", "time": "25 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w11-d3-p1", "name": "DP 33. Edit Distance", "time": "35 mins", "link": "https://leetcode.com/problems/edit-distance/", "yt": "https://www.youtube.com/watch?v=fJaKO8FbDdo", "lc": "https://leetcode.com/problems/edit-distance/", "tuf": "https://takeuforward.org/data-structure/edit-distance-dp-33/"}, {"id": "task-w11-d3-p2", "name": "\u270f\ufe0f Insert, Delete, Replace recurrence relation mapping", "time": "25 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w11-d4-p1", "name": "DP 35. Best Time to Buy and Sell Stock & DP 39. Stock Cooldown", "time": "35 mins", "link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/", "yt": "https://www.youtube.com/watch?v=IGIe46xw3YY", "lc": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/", "tuf": "https://takeuforward.org/data-structure/buy-and-sell-stocks-with-cooldown-dp-39/"}, {"id": "task-w11-d4-p2", "name": "\ud83d\udcc8 State-machine DP thinking (Buy, Sell, Cooldown states)", "time": "25 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w11-d5-p1", "name": "DP 43. Longest Increasing Subsequence (O(N log N))", "time": "35 mins", "link": "https://leetcode.com/problems/longest-increasing-subsequence/", "yt": "https://www.youtube.com/watch?v=ekcwMsSIzVc", "lc": "https://leetcode.com/problems/longest-increasing-subsequence/", "tuf": "https://takeuforward.org/data-structure/longest-increasing-subsequence-dp-41/"}, {"id": "task-w11-d5-p2", "name": "\ud83d\udd0d Patience sorting binary search mechanics", "time": "25 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w11-d6-p1", "name": "L1. Implement TRIE | INSERT | SEARCH | STARTSWITH", "time": "25 mins", "link": "https://leetcode.com/problems/implement-trie-prefix-tree/", "yt": "https://www.youtube.com/watch?v=dBGUmUQhjaM", "lc": "https://leetcode.com/problems/implement-trie-prefix-tree/", "tuf": "https://takeuforward.org/data-structure/implement-trie-1/"}, {"id": "task-w11-d6-p2", "name": "L6. Maximum XOR of Two Numbers in an Array (Bitwise Trie)", "time": "40 mins", "link": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/", "yt": "https://www.youtube.com/watch?v=EIhAwfHubE8", "lc": "https://leetcode.com/problems/maximum-xor-of-two-numbers-in-an-array/", "tuf": "https://takeuforward.org/data-structure/maximum-xor-of-two-numbers-in-an-array/"}, {"id": "task-w11-d6-p3", "name": "\ud83d\udcbb OS Fundamentals: Processes vs Threads, Deadlocks, Virtual Memory & Paging", "time": "100 mins"}, {"id": "task-w11-d6-p4", "name": "\ud83c\udf10 Computer Networks: TCP vs UDP, 3-way handshake, DNS & HTTPS", "time": "105 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w11-d7-p1", "name": "\ud83c\udf34 REST DAY \u2014 No study. Recharge!", "time": "0 mins"}]}]}, {"id": "w12", "number": 12, "title": "System Design, Machine Coding & Mocks", "shortTitle": "System Design & Mocks", "icon": "\ud83d\udccc", "targetHours": "~9.5 Hrs", "goal": "SOLID, Factory/Singleton/Observer, Caching/Load Balancing, Machine Coding & Mocks.", "days": [{"name": "Monday", "target": "1.0 Hr", "tasks": [{"id": "task-w12-d1-p1", "name": "\ud83d\udcd0 Low-Level Design (LLD): SOLID Principles with code examples", "time": "60 mins"}]}, {"name": "Tuesday", "target": "1.0 Hr", "tasks": [{"id": "task-w12-d2-p1", "name": "\ud83c\udfd7\ufe0f Design Patterns: Factory, Singleton, Strategy & Observer in Java/JS", "time": "60 mins"}]}, {"name": "Wednesday", "target": "1.0 Hr", "tasks": [{"id": "task-w12-d3-p1", "name": "\u26a1 High-Level Design (HLD): Caching strategies (Cache-aside, Write-through), Eviction (LRU/LFU)", "time": "60 mins"}]}, {"name": "Thursday", "target": "1.0 Hr", "tasks": [{"id": "task-w12-d4-p1", "name": "\u2696\ufe0f High-Level Design (HLD): Load Balancers, Scaling & CDNs", "time": "60 mins"}]}, {"name": "Friday", "target": "1.0 Hr", "tasks": [{"id": "task-w12-d5-p1", "name": "\ud83d\udcc4 Resume Review: Refine technical bullet points with metrics & STAR format", "time": "60 mins"}]}, {"name": "Saturday", "target": "4.5 Hrs Deep Dive", "tasks": [{"id": "task-w12-d6-p1", "name": "\ud83d\udcbb Machine Coding (React): Build Auto-complete Search bar OR Kanban Board", "time": "150 mins"}, {"id": "task-w12-d6-p2", "name": "\ud83c\udf99\ufe0f Timed Technical Mock Interview (2 DSA problems + behavioral prep)", "time": "120 mins"}]}, {"name": "Sunday", "target": "Rest Day", "tasks": [{"id": "task-w12-d7-p1", "name": "\ud83d\ude80 PLAN COMPLETE! Ready for interviews!", "time": "0 mins"}]}]}];
+
+    // Storage handling
+    const STORAGE_KEY = 'study_hub_progress_v1';
+    let progressState = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+    // Pre-check 2 Sum and 3 Sum if first run
+    if (Object.keys(progressState).length === 0) {
+      progressState['task-w1-d1-p1'] = true; // 2 Sum
+      progressState['task-w1-d2-p1'] = true; // 3 Sum
+      saveProgress();
+    }
+
+    function saveProgress() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progressState));
+      updateProgressStats();
+    }
+
+    function toggleTask(taskId) {
+      progressState[taskId] = !progressState[taskId];
+      const row = document.getElementById('row-' + taskId);
+      if (row) {
+        if (progressState[taskId]) {
+          row.classList.add('done');
+        } else {
+          row.classList.remove('done');
+        }
+      }
+      saveProgress();
+    }
+
+    function resetProgress() {
+      if (confirm('Reset all completed tasks?')) {
+        progressState = {};
+        document.querySelectorAll('.task-checkbox').forEach(cb => cb.checked = false);
+        document.querySelectorAll('.task-item').forEach(row => row.classList.remove('done'));
+        saveProgress();
+      }
+    }
+
+    function updateProgressStats() {
+      let total = 0;
+      let completed = 0;
+      weeksData.forEach(w => {
+        w.days.forEach(d => {
+          d.tasks.forEach(t => {
+            total++;
+            if (progressState[t.id]) completed++;
+          });
+        });
+      });
+
+      const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+      document.getElementById('progress-percent').innerText = pct + '%';
+      document.getElementById('progress-bar-fill').style.width = pct + '%';
+      document.getElementById('tasks-completed-text').innerText = `${completed} / ${total} completed`;
+    }
+
+    // Render Weeks
+    function renderWeeks() {
+      const container = document.getElementById('weeks-container');
+      const quickWeeks = document.getElementById('quick-weeks');
+      container.innerHTML = '';
+      quickWeeks.innerHTML = '';
+
+      weeksData.forEach((w, wIdx) => {
+        // Quick week links
+        const navLink = document.createElement('div');
+        navLink.className = 'nav-item';
+        navLink.style.fontSize = '0.85rem';
+        navLink.style.padding = '6px 12px';
+        navLink.innerHTML = `<span style="font-size: 0.8rem; color: var(--text-muted);">${w.number}</span> ${w.shortTitle}`;
+        navLink.onclick = () => {
+          switchTab('study-plan');
+          document.getElementById('week-card-' + w.id).scrollIntoView({ behavior: 'smooth' });
+        };
+        quickWeeks.appendChild(navLink);
+
+        // Week Card
+        const card = document.createElement('div');
+        card.className = 'week-card';
+        card.id = 'week-card-' + w.id;
+
+        let daysHtml = '';
+        w.days.forEach(d => {
+          let tasksHtml = '';
+          d.tasks.forEach(t => {
+            const isDone = !!progressState[t.id];
+            tasksHtml += `
+              <div class="task-item ${isDone ? 'done' : ''}" id="row-${t.id}">
+                <div class="task-left">
+                  <input type="checkbox" class="task-checkbox" ${isDone ? 'checked' : ''} onchange="toggleTask('${t.id}')">
+                  <span class="task-name">${t.name}</span>
+                </div>
+                                <div class="task-meta">
+                  <span class="task-time">${t.time}</span>
+                  ${t.yt ? `<a href="${t.yt}" target="_blank" class="task-btn yt-btn" title="Striver's YouTube Video">📺 Video</a>` : ''}
+                  ${t.lc ? `<a href="${t.lc}" target="_blank" class="task-btn lc-btn" title="Solve on LeetCode">💻 LeetCode</a>` : ''}
+                  ${t.tuf ? `<a href="${t.tuf}" target="_blank" class="task-btn tuf-btn" title="TakeUForward Article">📝 TUF Notes</a>` : ''}
+                  ${t.notesLink ? `<a href="${t.notesLink}" class="task-btn local-btn" title="Read Local Guide">📖 Local Guide</a>` : ''}
+                </div>
+              </div>
+            `;
+          });
+
+          daysHtml += `
+            <div class="day-section">
+              <div class="day-title">${d.name} <span style="font-weight: 500; text-transform: none; color: var(--text-muted);">(${d.target})</span></div>
+              ${tasksHtml}
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="week-header" onclick="toggleWeek('${w.id}')">
+            <div class="week-title">
+              <span>${w.icon || '📌'}</span>
+              <span>Week ${w.number}: ${w.title}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="week-badge">${w.targetHours}</span>
+              <span id="chevron-${w.id}" style="color: var(--text-muted); font-size: 12px;">▼</span>
+            </div>
+          </div>
+          <div class="week-body" id="body-${w.id}">
+            <div style="font-size: 0.86rem; color: var(--text-secondary); margin-bottom: 12px; background: rgba(0,0,0,0.25); padding: 8px 12px; border-radius: 6px;">
+              🎯 <strong>Goal:</strong> ${w.goal}
+            </div>
+            ${daysHtml}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      updateProgressStats();
+    }
+
+    function toggleWeek(weekId) {
+      const body = document.getElementById('body-' + weekId);
+      const chevron = document.getElementById('chevron-' + weekId);
+      if (body.style.display === 'none') {
+        body.style.display = 'block';
+        chevron.innerText = '▼';
+      } else {
+        body.style.display = 'none';
+        chevron.innerText = '▶';
+      }
+    }
+
+    // Search functionality
+    function handleSearch() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const taskRows = document.querySelectorAll('.task-item');
+
+      if (!query) {
+        taskRows.forEach(row => row.style.display = 'flex');
+        document.querySelectorAll('.week-card').forEach(w => w.style.display = 'block');
+        return;
+      }
+
+      switchTab('study-plan');
+
+      taskRows.forEach(row => {
+        const text = row.querySelector('.task-name').innerText.toLowerCase();
+        if (text.includes(query)) {
+          row.style.display = 'flex';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      // Show/hide weeks based on whether they have visible tasks
+      document.querySelectorAll('.week-card').forEach(card => {
+        const visibleTasks = card.querySelectorAll('.task-item[style*="display: flex"]');
+        if (visibleTasks.length > 0) {
+          card.style.display = 'block';
+          const body = card.querySelector('.week-body');
+          if (body) body.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Initialize
+    renderWeeks();
+  
+    function toggleMobileSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const backdrop = document.getElementById('sidebar-backdrop');
+      if (sidebar && backdrop) {
+        const isOpen = sidebar.classList.toggle('open');
+        backdrop.classList.toggle('active', isOpen);
+      }
+    }
+
+    // Auto-close mobile sidebar when clicking a nav item on small screens
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+        item.addEventListener('click', () => {
+          if (window.innerWidth <= 992) {
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.getElementById('sidebar-backdrop');
+            if (sidebar) sidebar.classList.remove('open');
+            if (backdrop) backdrop.classList.remove('active');
+          }
+        });
+      });
+    });
+
+  </script>
+</body>
+</html>
